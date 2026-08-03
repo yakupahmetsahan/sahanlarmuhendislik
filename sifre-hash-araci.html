@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Şifre Hash Aracı</title>
+<style>
+  body{ font-family:Arial,sans-serif; max-width:480px; margin:60px auto; padding:0 20px; }
+  h1{ font-size:1.2rem; }
+  input{ width:100%; padding:10px; font-size:1rem; box-sizing:border-box; margin:10px 0; }
+  .out{ background:#f5f5f5; padding:14px; border-radius:6px; word-break:break-all;
+        font-family:monospace; font-size:.9rem; margin-top:14px; }
+  p{ color:#555; font-size:.9rem; }
+</style>
+</head>
+<body>
+  <h1>Admin Şifresi için Hash Üretici</h1>
+  <p>Yeni şifreni aşağıya yaz, çıkan kodu kopyalayıp phpMyAdmin'de şu sorguyu
+     çalıştır (kod yerine kendi çıkanı koy):</p>
+  <p><code>UPDATE admin_users SET password_hash = 'KOD_BURAYA' WHERE username = 'admin';</code></p>
+
+  <input type="text" id="pw" placeholder="Yeni şifreni yaz..." autocomplete="off">
+  <div class="out" id="out">Hash burada görünecek...</div>
+
+  <script>
+    async function sha256(text){
+      const enc = new TextEncoder().encode(text);
+      const buf = await crypto.subtle.digest('SHA-256', enc);
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+    document.getElementById('pw').addEventListener('input', async (e) => {
+      const val = e.target.value;
+      document.getElementById('out').textContent = val ? await sha256(val) : 'Hash burada görünecek...';
+    });
+  </script>
+  <p style="margin-top:30px;color:#999;">
+    Bu sayfa hiçbir yere veri göndermez, tamamen tarayıcında (bilgisayarında)
+    çalışır — internete ihtiyacı bile yok, dosyayı kaydedip çift tıklayarak açabilirsin.
+  </p>
+</body>
+</html>

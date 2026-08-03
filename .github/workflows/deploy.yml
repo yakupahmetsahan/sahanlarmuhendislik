@@ -1,0 +1,68 @@
+name: İHS Hosting'e Otomatik Yükle
+
+# Bu dosya main dalına her "push" yapıldığında otomatik çalışır ve
+# hem statik siteyi hem admin paneli FTP ile hostinge yükler.
+#
+# ÇALIŞMASI İÇİN GEREKLİ: repo Settings -> Secrets and variables -> Actions
+# altına şu 3 "secret" eklenmeli (İHS panelinizdeki FTP bilgileri):
+#   FTP_SERVER    -> örn: ftp.sahanlarmuhendislik.com
+#   FTP_USERNAME  -> İHS FTP kullanıcı adınız
+#   FTP_PASSWORD  -> İHS FTP şifreniz
+#
+# Aşağıdaki "server-dir" (hedef klasör) değerlerini kendi hosting
+# klasör yapınıza göre değiştirmeniz gerekebilir.
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:   # GitHub arayüzünden elle de tetiklenebilsin diye
+
+jobs:
+  deploy-site:
+    name: Statik siteyi yükle (ana domain)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu indir
+        uses: actions/checkout@v4
+
+      - name: FTP ile siteyi yükle
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./site/
+          server-dir: ./http/
+          dangerous-clean-slate: false
+          exclude: |
+            **/download/**
+            **/Guncellemeler/**
+            **/ProgramSetuplar/**
+            **/Sozlesmeler/**
+          # ^ Mevcut hostingde zaten duran, dokunulmaması gereken klasörler.
+          # ^ İHS'te ana klasör genelde "httpdocs" veya "wwwroot" olur.
+          #   Hosting panelinizdeki dosya yöneticisinde adını görüp
+          #   burayı ona göre düzeltin (örn: ./public_html/).
+          #   dangerous-clean-slate:false ve exclude listesi, sunucuda
+          #   zaten var olan Download/Güncellemeler klasörlerinin
+          #   silinmemesini garanti eder.
+
+  deploy-admin:
+    name: Admin paneli yükle (alt klasör)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu indir
+        uses: actions/checkout@v4
+
+      - name: FTP ile admin paneli yükle
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./admin/
+          server-dir: ./http/admin/
+          dangerous-clean-slate: false
+          # ^ Admin panel siteniz/admin adresinde açılacak şekilde
+          #   "httpdocs" altına "admin" klasörü olarak yüklenir.
+          #   Bu satırı da kendi klasör yapınıza göre düzeltin.
