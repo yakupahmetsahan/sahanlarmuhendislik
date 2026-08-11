@@ -1,14 +1,16 @@
 using System;
 using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
-using MySql.Data.MySqlClient;
 
 /// <summary>
 /// Basit veritabanı yardımcı sınıfı. Tüm sayfalar bu sınıf üzerinden
-/// MySQL'e bağlanır. Bağlantı bilgisi Web.config -> connectionStrings
+/// MSSQL'e bağlanır. Bağlantı bilgisi Web.config -> connectionStrings
 /// içindeki "SahanlarDb" değerinden okunur.
+/// System.Data.SqlClient .NET Framework'ün kendi parçasıdır — ekstra
+/// bir DLL yüklemeye veya Full Trust'a ihtiyaç duymaz.
 /// </summary>
 public static class Db
 {
@@ -17,21 +19,21 @@ public static class Db
         get { return ConfigurationManager.ConnectionStrings["SahanlarDb"].ConnectionString; }
     }
 
-    public static MySqlConnection GetConnection()
+    public static SqlConnection GetConnection()
     {
-        var conn = new MySqlConnection(ConnStr);
+        var conn = new SqlConnection(ConnStr);
         conn.Open();
         return conn;
     }
 
     /// <summary>SELECT sorgusu çalıştırır ve DataTable döner.</summary>
-    public static DataTable Query(string sql, params MySqlParameter[] parameters)
+    public static DataTable Query(string sql, params SqlParameter[] parameters)
     {
         using (var conn = GetConnection())
-        using (var cmd = new MySqlCommand(sql, conn))
+        using (var cmd = new SqlCommand(sql, conn))
         {
             if (parameters != null) cmd.Parameters.AddRange(parameters);
-            using (var adapter = new MySqlDataAdapter(cmd))
+            using (var adapter = new SqlDataAdapter(cmd))
             {
                 var table = new DataTable();
                 adapter.Fill(table);
@@ -41,10 +43,10 @@ public static class Db
     }
 
     /// <summary>INSERT / UPDATE / DELETE çalıştırır, etkilenen satır sayısını döner.</summary>
-    public static int Execute(string sql, params MySqlParameter[] parameters)
+    public static int Execute(string sql, params SqlParameter[] parameters)
     {
         using (var conn = GetConnection())
-        using (var cmd = new MySqlCommand(sql, conn))
+        using (var cmd = new SqlCommand(sql, conn))
         {
             if (parameters != null) cmd.Parameters.AddRange(parameters);
             return cmd.ExecuteNonQuery();
@@ -52,14 +54,14 @@ public static class Db
     }
 
     /// <summary>INSERT sonrası eklenen satırın otomatik ID'sini döner.</summary>
-    public static long ExecuteInsertReturnId(string sql, params MySqlParameter[] parameters)
+    public static long ExecuteInsertReturnId(string sql, params SqlParameter[] parameters)
     {
         using (var conn = GetConnection())
-        using (var cmd = new MySqlCommand(sql, conn))
+        using (var cmd = new SqlCommand(sql + "; SELECT SCOPE_IDENTITY();", conn))
         {
             if (parameters != null) cmd.Parameters.AddRange(parameters);
-            cmd.ExecuteNonQuery();
-            return cmd.LastInsertedId;
+            var result = cmd.ExecuteScalar();
+            return result == null || result == DBNull.Value ? 0 : Convert.ToInt64(result);
         }
     }
 
