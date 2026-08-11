@@ -1,8 +1,8 @@
 using System;
 using System.IO;
-using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 
-public partial class Admin_ReferenceEdit : System.Web.UI.Page
+public partial class Admin_ReferenceEdit : AdminBasePage
 {
     private int? EditId
     {
@@ -33,7 +33,7 @@ public partial class Admin_ReferenceEdit : System.Web.UI.Page
 
     private void LoadExisting(int id)
     {
-        var table = Db.Query("SELECT * FROM site_references WHERE id = @id", new MySqlParameter("@id", id));
+        var table = Db.Query("SELECT * FROM site_references WHERE id = @id", new SqlParameter("@id", id));
         if (table.Rows.Count == 0) return;
         var row = table.Rows[0];
 
@@ -70,7 +70,7 @@ public partial class Admin_ReferenceEdit : System.Web.UI.Page
             if (EditId.HasValue)
             {
                 var existing = Db.Query("SELECT photo_filename FROM site_references WHERE id = @id",
-                    new MySqlParameter("@id", EditId.Value));
+                    new SqlParameter("@id", EditId.Value));
                 if (existing.Rows.Count > 0)
                     photoFilename = existing.Rows[0]["photo_filename"] as string;
             }
@@ -82,19 +82,19 @@ public partial class Admin_ReferenceEdit : System.Web.UI.Page
 
             var pars = new[]
             {
-                new MySqlParameter("@category", ddlCategory.SelectedValue),
-                new MySqlParameter("@name", txtName.Text.Trim()),
-                new MySqlParameter("@ref_type", NullIfEmpty(txtType.Text)),
-                new MySqlParameter("@location", NullIfEmpty(txtLocation.Text)),
-                new MySqlParameter("@ref_year", NullIfEmptyInt(txtYear.Text)),
-                new MySqlParameter("@power_value", NullIfEmptyDecimal(txtPowerValue.Text)),
-                new MySqlParameter("@power_unit", NullIfEmpty(ddlPowerUnit.SelectedValue)),
-                new MySqlParameter("@enh_meters", NullIfEmptyInt(txtEnh.Text)),
-                new MySqlParameter("@direk_count", NullIfEmptyInt(txtDirek.Text)),
-                new MySqlParameter("@unit_count", NullIfEmptyInt(txtUnitCount.Text)),
-                new MySqlParameter("@photo_filename", (object)photoFilename ?? DBNull.Value),
-                new MySqlParameter("@is_featured", chkFeatured.Checked ? 1 : 0),
-                new MySqlParameter("@sort_order", string.IsNullOrWhiteSpace(txtSortOrder.Text) ? 0 : int.Parse(txtSortOrder.Text))
+                new SqlParameter("@category", ddlCategory.SelectedValue),
+                new SqlParameter("@name", txtName.Text.Trim()),
+                new SqlParameter("@ref_type", NullIfEmpty(txtType.Text)),
+                new SqlParameter("@location", NullIfEmpty(txtLocation.Text)),
+                new SqlParameter("@ref_year", NullIfEmptyInt(txtYear.Text)),
+                new SqlParameter("@power_value", NullIfEmptyDecimal(txtPowerValue.Text)),
+                new SqlParameter("@power_unit", NullIfEmpty(ddlPowerUnit.SelectedValue)),
+                new SqlParameter("@enh_meters", NullIfEmptyInt(txtEnh.Text)),
+                new SqlParameter("@direk_count", NullIfEmptyInt(txtDirek.Text)),
+                new SqlParameter("@unit_count", NullIfEmptyInt(txtUnitCount.Text)),
+                new SqlParameter("@photo_filename", (object)photoFilename ?? DBNull.Value),
+                new SqlParameter("@is_featured", chkFeatured.Checked ? 1 : 0),
+                new SqlParameter("@sort_order", string.IsNullOrWhiteSpace(txtSortOrder.Text) ? 0 : int.Parse(txtSortOrder.Text))
             };
 
             if (EditId.HasValue)
@@ -105,7 +105,7 @@ public partial class Admin_ReferenceEdit : System.Web.UI.Page
                                 enh_meters=@enh_meters, direk_count=@direk_count, unit_count=@unit_count,
                                 photo_filename=@photo_filename, is_featured=@is_featured, sort_order=@sort_order
                              WHERE id=@id",
-                    Concat(pars, new MySqlParameter("@id", EditId.Value)));
+                    Concat(pars, new SqlParameter("@id", EditId.Value)));
             }
             else
             {
@@ -144,9 +144,9 @@ public partial class Admin_ReferenceEdit : System.Web.UI.Page
     private static object NullIfEmptyInt(string s) { int v; return int.TryParse(s, out v) ? (object)v : DBNull.Value; }
     private static object NullIfEmptyDecimal(string s) { decimal v; return decimal.TryParse(s, out v) ? (object)v : DBNull.Value; }
 
-    private static MySqlParameter[] Concat(MySqlParameter[] arr, MySqlParameter extra)
+    private static SqlParameter[] Concat(SqlParameter[] arr, SqlParameter extra)
     {
-        var list = new System.Collections.Generic.List<MySqlParameter>(arr) { extra };
+        var list = new System.Collections.Generic.List<SqlParameter>(arr) { extra };
         return list.ToArray();
     }
 }

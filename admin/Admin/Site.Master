@@ -47,7 +47,7 @@
         <div class="topbar">
             <b>Şahanlar Mühendislik — Yönetim Paneli</b>
             <div>
-                <span style="color:#8592a8;font-size:.85rem;">Hoş geldin, <%= User.Identity.Name %></span>
+                <span style="color:#8592a8;font-size:.85rem;">Hoş geldin, <%= Session["AdminDisplayName"] ?? Session["AdminUser"] %></span>
                 <a href="~/Logout.aspx" runat="server">Çıkış Yap</a>
             </div>
         </div>
@@ -58,6 +58,7 @@
                 <a href="~/Admin/References.aspx?cat=enerji" runat="server">Enerji Referansları</a>
                 <a href="~/Admin/References.aspx?cat=asansor" runat="server">Asansör Referansları</a>
                 <a href="~/Admin/References.aspx?cat=yazilim" runat="server">Yazılım Referansları</a>
+                <a href="~/Admin/Images.aspx" runat="server">Kategori Görselleri</a>
                 <a href="~/Admin/Team.aspx" runat="server">Ekip</a>
                 <a href="~/Admin/Content.aspx" runat="server">Sayfa Metinleri</a>
             </div>

@@ -1,8 +1,8 @@
 using System;
 using System.Web.UI.WebControls;
-using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 
-public partial class Admin_Team : System.Web.UI.Page
+public partial class Admin_Team : AdminBasePage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -21,7 +21,7 @@ public partial class Admin_Team : System.Web.UI.Page
         if (e.CommandName == "DeleteRow")
         {
             int id = Convert.ToInt32(e.CommandArgument);
-            Db.Execute("DELETE FROM team_members WHERE id = @id", new MySqlParameter("@id", id));
+            Db.Execute("DELETE FROM team_members WHERE id = @id", new SqlParameter("@id", id));
             litMsg.Text = "<div class='msg-ok'>Ekip üyesi silindi.</div>";
             BindGrid();
         }

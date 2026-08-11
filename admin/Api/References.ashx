@@ -4,7 +4,7 @@ using System;
 using System.Data;
 using System.Text;
 using System.Web;
-using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 
 /// <summary>
 /// Herkese açık, salt-okunur JSON uç noktası.
@@ -31,7 +31,7 @@ public class Api_References : IHttpHandler
         DataTable table = Db.Query(
             "SELECT id,name,ref_type,location,ref_year,power_value,power_unit,enh_meters,direk_count,unit_count,photo_filename,is_featured " +
             "FROM site_references WHERE category=@c ORDER BY sort_order, ref_year DESC, name",
-            new MySqlParameter("@c", category));
+            new SqlParameter("@c", category));
 
         context.Response.Write(ToJsonArray(table));
     }

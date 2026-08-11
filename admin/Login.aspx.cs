@@ -1,5 +1,4 @@
 using System;
-using System.Web.Security;
 
 public partial class Login : System.Web.UI.Page
 {
@@ -19,8 +18,8 @@ public partial class Login : System.Web.UI.Page
         }
 
         var table = Db.Query(
-            "SELECT id, username, password_hash, display_name FROM admin_users WHERE username = @u LIMIT 1",
-            new MySql.Data.MySqlClient.MySqlParameter("@u", username));
+            "SELECT TOP 1 id, username, password_hash, display_name FROM admin_users WHERE username = @u",
+            new SqlParameter("@u", username));
 
         if (table.Rows.Count == 0)
         {
@@ -37,12 +36,19 @@ public partial class Login : System.Web.UI.Page
             return;
         }
 
-        // Son giriş zamanını güncelle
         Db.Execute("UPDATE admin_users SET last_login_at = NOW() WHERE id = @id",
-            new MySql.Data.MySqlClient.MySqlParameter("@id", table.Rows[0]["id"]));
+            new SqlParameter("@id", table.Rows[0]["id"]));
 
-        FormsAuthentication.SetAuthCookie(username, false);
-        Response.Redirect("~/Admin/Default.aspx", false);
+        // Session tabanlı giriş — Web.config'te Forms Authentication tanımlamaya
+        // gerek kalmadan çalışır (bkz. App_Code/AdminBasePage.cs).
+        Session["AdminUser"] = username;
+        Session["AdminDisplayName"] = table.Rows[0]["display_name"].ToString();
+
+        string returnUrl = Request.QueryString["returnUrl"];
+        if (!string.IsNullOrEmpty(returnUrl) && returnUrl.StartsWith("/"))
+            Response.Redirect(returnUrl, false);
+        else
+            Response.Redirect("~/Admin/Default.aspx", false);
     }
 
     private void ShowError(string message)

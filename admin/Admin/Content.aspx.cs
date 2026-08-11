@@ -1,9 +1,9 @@
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 
-public partial class Admin_Content : System.Web.UI.Page
+public partial class Admin_Content : AdminBasePage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -14,7 +14,7 @@ public partial class Admin_Content : System.Web.UI.Page
     {
         var table = Db.Query(
             "SELECT content_key, content_value FROM page_content WHERE page_key = @p ORDER BY content_key",
-            new MySqlParameter("@p", ddlPage.SelectedValue));
+            new SqlParameter("@p", ddlPage.SelectedValue));
         rptContent.DataSource = table;
         rptContent.DataBind();
     }
@@ -39,9 +39,9 @@ public partial class Admin_Content : System.Web.UI.Page
 
             Db.Execute(
                 "UPDATE page_content SET content_value = @v WHERE page_key = @p AND content_key = @k",
-                new MySqlParameter("@v", txtValue.Text),
-                new MySqlParameter("@p", ddlPage.SelectedValue),
-                new MySqlParameter("@k", hidKey.Value));
+                new SqlParameter("@v", txtValue.Text),
+                new SqlParameter("@p", ddlPage.SelectedValue),
+                new SqlParameter("@k", hidKey.Value));
         }
 
         litMsg.Text = "<div class='msg-ok'>Değişiklikler kaydedildi.</div>";

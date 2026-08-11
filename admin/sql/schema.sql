@@ -1,100 +1,108 @@
 -- ============================================================
--- Şahanlar Mühendislik — Admin Panel Veritabanı Şeması
--- MySQL 5.7+ / 8.0 uyumlu
--- Kurulum: bu dosyanın tamamını phpMyAdmin (veya hostinginizin
--- sunduğu MySQL yönetim aracı) üzerinden "Import / İçe Aktar"
--- sekmesinden çalıştırmanız yeterli.
+-- Şahanlar Mühendislik — Admin Panel Veritabanı Şeması (MSSQL)
+-- SQL Server 2012+ uyumlu
+-- Kurulum: SQL Server Management Studio (SSMS) veya İHS panelinizin
+-- sunduğu MSSQL yönetim aracından "New Query" ile bu dosyanın
+-- tamamını çalıştırın.
 -- ============================================================
-
-SET NAMES utf8;
-SET FOREIGN_KEY_CHECKS = 0;
 
 -- ------------------------------------------------------------
 -- 1) Yönetici kullanıcıları
 -- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS admin_users (
-    id              INT AUTO_INCREMENT PRIMARY KEY,
-    username        VARCHAR(50)  NOT NULL UNIQUE,
-    password_hash   VARCHAR(255) NOT NULL,   -- SHA256 hex (bkz. Db.cs -> HashPassword)
-    display_name    VARCHAR(100) NOT NULL,
-    created_at      TIMESTAMP NULL DEFAULT NULL,
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'admin_users')
+CREATE TABLE admin_users (
+    id              INT IDENTITY(1,1) PRIMARY KEY,
+    username        NVARCHAR(50)  NOT NULL UNIQUE,
+    password_hash   NVARCHAR(255) NOT NULL,   -- SHA256 hex (bkz. Db.cs -> HashPassword)
+    display_name    NVARCHAR(100) NOT NULL,
+    created_at      DATETIME NOT NULL DEFAULT GETDATE(),
     last_login_at   DATETIME NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+);
+GO
 
 -- Varsayılan kullanıcı: admin / Sahanlar2026!
 -- (bu hash aşağıdaki şifrenin SHA256'sıdır — ilk girişten sonra
---  Admin panelden mutlaka değiştirin)
--- Not: hash SQL içinde SHA2() ile değil, Python'da önceden hesaplanıp
--- düz metin olarak yazıldı — bazı eski MySQL sürümlerinde SHA2()
--- fonksiyonu bulunmuyor.
+--  Admin panelden mutlaka değiştirin — bkz. sifre-hash-araci.html)
+IF NOT EXISTS (SELECT * FROM admin_users WHERE username = 'admin')
 INSERT INTO admin_users (username, password_hash, display_name)
-VALUES ('admin', '6d0147963a52b66a8cac073e3a3e90fe175b05e454e33eb3fcfcaca11b6f2ae6', 'Yönetici')
-ON DUPLICATE KEY UPDATE username = username;
+VALUES ('admin', '6d0147963a52b66a8cac073e3a3e90fe175b05e454e33eb3fcfcaca11b6f2ae6', N'Yönetici');
+GO
 
 -- ------------------------------------------------------------
 -- 2) Referanslar (Elektrik / Enerji / Asansör / Yazılım ortak tablo)
 -- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS site_references (
-    id              INT AUTO_INCREMENT PRIMARY KEY,
-    category        ENUM('elektrik','enerji','asansor','yazilim') NOT NULL,
-    name            VARCHAR(200) NOT NULL,      -- Firma / proje adı
-    ref_type        VARCHAR(150) NULL,          -- Tür (Tavuk Çiftliği, Çatı Tipi, Apartman, vb.)
-    location        VARCHAR(150) NULL,          -- İl / ilçe
-    ref_year        INT NULL,                   -- Yıl
-    power_value     DECIMAL(10,2) NULL,         -- kVa / kW değeri (varsa)
-    power_unit      VARCHAR(20) NULL,           -- 'kVa', 'kW', 'MW' vb.
-    enh_meters      INT NULL,                   -- Enerji Nakil Hattı uzunluğu (metre) — sadece elektrik
-    direk_count     INT NULL,                   -- Direk adedi — sadece elektrik
-    unit_count      INT NULL,                   -- Adet (asansör için: kaç adet asansör)
-    photo_filename  VARCHAR(255) NULL,          -- /Uploads/references/ altındaki dosya adı
-    is_featured     TINYINT(1) NOT NULL DEFAULT 0, -- "Öne Çıkan Projeler" bölümünde göster
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'site_references')
+CREATE TABLE site_references (
+    id              INT IDENTITY(1,1) PRIMARY KEY,
+    category        NVARCHAR(20) NOT NULL,      -- 'elektrik','enerji','asansor','yazilim','hayvancilik','tarim'
+    name            NVARCHAR(200) NOT NULL,     -- Firma / proje adı
+    ref_type        NVARCHAR(150) NULL,         -- Tür
+    location        NVARCHAR(150) NULL,         -- İl / ilçe
+    ref_year        INT NULL,
+    power_value     DECIMAL(10,2) NULL,         -- kVa / kW değeri
+    power_unit      NVARCHAR(20) NULL,
+    enh_meters      INT NULL,                   -- Enerji Nakil Hattı uzunluğu (metre)
+    direk_count     INT NULL,
+    unit_count      INT NULL,                   -- Adet (asansör vb.)
+    photo_filename  NVARCHAR(255) NULL,
+    is_featured     BIT NOT NULL DEFAULT 0,
     sort_order      INT NOT NULL DEFAULT 0,
-    created_at      TIMESTAMP NULL DEFAULT NULL,
-    updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_category (category),
-    INDEX idx_featured (category, is_featured)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    created_at      DATETIME NOT NULL DEFAULT GETDATE(),
+    updated_at      DATETIME NOT NULL DEFAULT GETDATE()
+);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_category' AND object_id = OBJECT_ID('site_references'))
+CREATE INDEX idx_category ON site_references(category);
+GO
 
 -- ------------------------------------------------------------
 -- 3) Ekip üyeleri
 -- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS team_members (
-    id              INT AUTO_INCREMENT PRIMARY KEY,
-    full_name       VARCHAR(150) NOT NULL,
-    role_title      VARCHAR(200) NOT NULL,      -- "Elektrik-Elektronik Mühendisi · Şirket Sahibi" gibi
-    team_group      VARCHAR(100) NOT NULL,      -- "Mühendislik Ekibi" / "Koordinasyon & Ofis" / "Teknik Ekip"
-    photo_filename  VARCHAR(255) NULL,          -- /Uploads/team/ altında (opsiyonel, yoksa baş harfler gösterilir)
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'team_members')
+CREATE TABLE team_members (
+    id              INT IDENTITY(1,1) PRIMARY KEY,
+    full_name       NVARCHAR(150) NOT NULL,
+    role_title      NVARCHAR(200) NOT NULL,
+    team_group      NVARCHAR(100) NOT NULL,
+    photo_filename  NVARCHAR(255) NULL,
     sort_order      INT NOT NULL DEFAULT 0,
-    created_at      TIMESTAMP NULL DEFAULT NULL,
-    updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    created_at      DATETIME NOT NULL DEFAULT GETDATE(),
+    updated_at      DATETIME NOT NULL DEFAULT GETDATE()
+);
+GO
 
 -- ------------------------------------------------------------
--- 4) Sayfa metinleri (başlıklar, hakkımızda, sloganlar vb.)
+-- 4) Sayfa metinleri
 -- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS page_content (
-    id              INT AUTO_INCREMENT PRIMARY KEY,
-    page_key        VARCHAR(50)  NOT NULL,      -- 'index', 'elektrik', 'enerji', 'asansor', 'yazilim'
-    content_key     VARCHAR(100) NOT NULL,      -- 'hero_title', 'hero_lead', 'about_text', 'tagline' vb.
-    content_value   TEXT NULL,
-    updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_page_content (page_key, content_key)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'page_content')
+CREATE TABLE page_content (
+    id              INT IDENTITY(1,1) PRIMARY KEY,
+    page_key        NVARCHAR(50)  NOT NULL,
+    content_key     NVARCHAR(100) NOT NULL,
+    content_value   NVARCHAR(MAX) NULL,
+    updated_at      DATETIME NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT uq_page_content UNIQUE (page_key, content_key)
+);
+GO
 
--- Başlangıç içerikleri (siteyle bugün aynı olacak şekilde) --
-INSERT INTO page_content (page_key, content_key, content_value) VALUES
-('index', 'hero_eyebrow', 'Çivril / Denizli — 2016''dan bu yana'),
-('index', 'hero_title', 'Mühendisliği dört alanda birleştiriyoruz.'),
-('index', 'hero_lead', 'Elektrik, enerji, asansör ve yazılım — işletmenizin ihtiyaç duyduğu her mühendislik çözümünü tek adresten sunuyoruz. Devam etmek istediğin alanı seç.'),
-('index', 'about_text', 'Şahanlar Mühendislik olarak, 2016 yılında elektrik sektöründe faaliyetlerimize başlamış olup, geçen yıllar içerisinde enerji ve asansör sektörlerinde de hizmet vermeye başlayarak çalışma alanlarımızı genişletmiş, son olarak da yazılım alanına adım atmış bulunmaktayız.'),
-('elektrik', 'hero_title', 'Tesisattan panoya, mühendislik güvencesiyle elektrik.'),
-('elektrik', 'hero_lead', 'Konut, işyeri ve sanayi tesislerinde elektrik tesisatı, pano ve aydınlatma sistemlerini proje aşamasından bakıma kadar uçtan uca yürütüyoruz.'),
-('enerji', 'hero_title', 'Enerjini verimli kullanmanın mühendislik yolu.'),
-('enerji', 'hero_lead', 'Enerji verimliliğinden kompanzasyona, yenilenebilir enerji sistemlerinden enerji kimlik belgesine kadar işletmenizin enerji maliyetini düşürecek çözümleri planlıyoruz.'),
-('asansor', 'hero_title', 'Asansörde güvenlik ve konforu bir arada sağlıyoruz.'),
-('asansor', 'hero_lead', 'Yeni asansör montajından periyodik bakım ve revizyona kadar, yönetmeliklere uygun asansör hizmetleri sunuyoruz.'),
-('yazilim', 'hero_title', 'İşletmenizin operasyonunu yöneten yazılımlar.'),
-('yazilim', 'hero_lead', 'Perde otomasyonundan muhasebe ve POS takibine kadar, işletmelerin günlük operasyonunu kolaylaştıran masaüstü yazılımlar geliştiriyoruz.')
-ON DUPLICATE KEY UPDATE content_value = VALUES(content_value);
-
-SET FOREIGN_KEY_CHECKS = 1;
+-- Başlangıç içerikleri
+MERGE page_content AS target
+USING (VALUES
+    (N'index', N'hero_eyebrow', N'Çivril / Denizli — 2016''dan bu yana'),
+    (N'index', N'hero_title', N'Mühendisliği dört alanda birleştiriyoruz.'),
+    (N'index', N'hero_lead', N'Elektrik, enerji, asansör ve yazılım — işletmenizin ihtiyaç duyduğu her mühendislik çözümünü tek adresten sunuyoruz. Devam etmek istediğin alanı seç.'),
+    (N'index', N'about_text', N'Şahanlar Mühendislik olarak, 2016 yılında elektrik sektöründe faaliyetlerimize başlamış olup, geçen yıllar içerisinde enerji ve asansör sektörlerinde de hizmet vermeye başlayarak çalışma alanlarımızı genişletmiş, son olarak da yazılım alanına adım atmış bulunmaktayız.'),
+    (N'elektrik', N'hero_title', N'Tesisattan panoya, mühendislik güvencesiyle elektrik.'),
+    (N'elektrik', N'hero_lead', N'Konut, işyeri ve sanayi tesislerinde elektrik tesisatı, pano ve aydınlatma sistemlerini proje aşamasından bakıma kadar uçtan uca yürütüyoruz.'),
+    (N'enerji', N'hero_title', N'Enerjini verimli kullanmanın mühendislik yolu.'),
+    (N'enerji', N'hero_lead', N'Enerji verimliliğinden kompanzasyona, yenilenebilir enerji sistemlerinden enerji kimlik belgesine kadar işletmenizin enerji maliyetini düşürecek çözümleri planlıyoruz.'),
+    (N'asansor', N'hero_title', N'Asansörde güvenlik ve konforu bir arada sağlıyoruz.'),
+    (N'asansor', N'hero_lead', N'Yeni asansör montajından periyodik bakım ve revizyona kadar, yönetmeliklere uygun asansör hizmetleri sunuyoruz.'),
+    (N'yazilim', N'hero_title', N'İşletmenizin operasyonunu yöneten yazılımlar.'),
+    (N'yazilim', N'hero_lead', N'Perde otomasyonundan muhasebe ve POS takibine kadar, işletmelerin günlük operasyonunu kolaylaştıran masaüstü yazılımlar geliştiriyoruz.')
+) AS source (page_key, content_key, content_value)
+ON target.page_key = source.page_key AND target.content_key = source.content_key
+WHEN MATCHED THEN UPDATE SET content_value = source.content_value
+WHEN NOT MATCHED THEN INSERT (page_key, content_key, content_value) VALUES (source.page_key, source.content_key, source.content_value);
+GO

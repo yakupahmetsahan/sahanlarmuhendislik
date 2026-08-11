@@ -1,7 +1,7 @@
 using System;
-using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 
-public partial class Admin_TeamEdit : System.Web.UI.Page
+public partial class Admin_TeamEdit : AdminBasePage
 {
     private int? EditId
     {
@@ -19,7 +19,7 @@ public partial class Admin_TeamEdit : System.Web.UI.Page
             if (EditId.HasValue)
             {
                 litHeader.Text = "Ekip Üyesini Düzenle";
-                var table = Db.Query("SELECT * FROM team_members WHERE id = @id", new MySqlParameter("@id", EditId.Value));
+                var table = Db.Query("SELECT * FROM team_members WHERE id = @id", new SqlParameter("@id", EditId.Value));
                 if (table.Rows.Count > 0)
                 {
                     var row = table.Rows[0];
@@ -49,20 +49,20 @@ public partial class Admin_TeamEdit : System.Web.UI.Page
             {
                 Db.Execute(
                     "UPDATE team_members SET full_name=@n, role_title=@r, team_group=@g, sort_order=@s WHERE id=@id",
-                    new MySqlParameter("@n", txtName.Text.Trim()),
-                    new MySqlParameter("@r", txtRole.Text.Trim()),
-                    new MySqlParameter("@g", ddlGroup.SelectedValue),
-                    new MySqlParameter("@s", sortOrder),
-                    new MySqlParameter("@id", EditId.Value));
+                    new SqlParameter("@n", txtName.Text.Trim()),
+                    new SqlParameter("@r", txtRole.Text.Trim()),
+                    new SqlParameter("@g", ddlGroup.SelectedValue),
+                    new SqlParameter("@s", sortOrder),
+                    new SqlParameter("@id", EditId.Value));
             }
             else
             {
                 Db.Execute(
                     "INSERT INTO team_members (full_name, role_title, team_group, sort_order) VALUES (@n,@r,@g,@s)",
-                    new MySqlParameter("@n", txtName.Text.Trim()),
-                    new MySqlParameter("@r", txtRole.Text.Trim()),
-                    new MySqlParameter("@g", ddlGroup.SelectedValue),
-                    new MySqlParameter("@s", sortOrder));
+                    new SqlParameter("@n", txtName.Text.Trim()),
+                    new SqlParameter("@r", txtRole.Text.Trim()),
+                    new SqlParameter("@g", ddlGroup.SelectedValue),
+                    new SqlParameter("@s", sortOrder));
             }
 
             Response.Redirect("Team.aspx", false);

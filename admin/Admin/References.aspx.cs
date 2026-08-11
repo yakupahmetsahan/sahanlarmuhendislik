@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Web.UI.WebControls;
-using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 
-public partial class Admin_References : System.Web.UI.Page
+public partial class Admin_References : AdminBasePage
 {
     private static readonly System.Collections.Generic.Dictionary<string, string> CategoryLabels =
         new System.Collections.Generic.Dictionary<string, string>
@@ -33,7 +33,7 @@ public partial class Admin_References : System.Web.UI.Page
     {
         var table = Db.Query(
             "SELECT * FROM site_references WHERE category = @cat ORDER BY sort_order, ref_year DESC, name",
-            new MySqlParameter("@cat", CategoryKey));
+            new SqlParameter("@cat", CategoryKey));
         gvReferences.DataSource = table;
         gvReferences.DataBind();
         litCount.Text = table.Rows.Count.ToString();
@@ -47,7 +47,7 @@ public partial class Admin_References : System.Web.UI.Page
 
             // Fotoğraf dosyasını da diskten sil
             var table = Db.Query("SELECT photo_filename FROM site_references WHERE id = @id",
-                new MySqlParameter("@id", id));
+                new SqlParameter("@id", id));
             if (table.Rows.Count > 0 && table.Rows[0]["photo_filename"] != DBNull.Value)
             {
                 string filename = table.Rows[0]["photo_filename"].ToString();
@@ -58,7 +58,7 @@ public partial class Admin_References : System.Web.UI.Page
                 }
             }
 
-            Db.Execute("DELETE FROM site_references WHERE id = @id", new MySqlParameter("@id", id));
+            Db.Execute("DELETE FROM site_references WHERE id = @id", new SqlParameter("@id", id));
             litMsg.Text = "<div class='msg-ok'>Referans silindi.</div>";
             BindGrid();
         }

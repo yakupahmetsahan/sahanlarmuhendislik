@@ -1,7 +1,7 @@
 using System;
-using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 
-public partial class Admin_Default : System.Web.UI.Page
+public partial class Admin_Default : AdminBasePage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -21,7 +21,7 @@ public partial class Admin_Default : System.Web.UI.Page
     {
         var table = Db.Query(
             "SELECT COUNT(*) AS c FROM site_references WHERE category = @c",
-            new MySqlParameter("@c", category));
+            new SqlParameter("@c", category));
         return table.Rows[0]["c"].ToString();
     }
 }

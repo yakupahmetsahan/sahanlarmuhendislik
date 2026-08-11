@@ -13,9 +13,8 @@ name: İHS Hosting'e Otomatik Yükle
 # klasör yapınıza göre değiştirmeniz gerekebilir.
 
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:   # GitHub arayüzünden elle de tetiklenebilsin diye
+  workflow_dispatch:   # artık otomatik değil — sadece GitHub arayüzünden elle tetiklenir
+                        # (Deploy artık deploy.bat ile bilgisayarından yapılıyor, bkz. DEPLOY_KURULUM.md)
 
 jobs:
   deploy-site:
@@ -31,6 +30,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
           local-dir: ./site/
           server-dir: ./http/
           dangerous-clean-slate: false
@@ -60,6 +60,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
           local-dir: ./admin/
           server-dir: ./http/admin/
           dangerous-clean-slate: false

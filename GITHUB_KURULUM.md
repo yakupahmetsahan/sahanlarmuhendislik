@@ -2,12 +2,31 @@
 
 Bu paket iki şeyi içerir:
 - `/site/`  → müşteri tarafında görünen web sitesi (statik HTML)
-- `/admin/` → referans/ekip/metin yönetim paneli (ASP.NET + MySQL)
+- `/admin/` → referans/ekip/metin yönetim paneli (ASP.NET + MSSQL)
 - `/.github/workflows/deploy.yml` → GitHub'a her yükleme yaptığında
   bu iki klasörü otomatik olarak İHS hostingine FTP ile gönderen robot
 
 Aşağıdaki adımları sırayla uygula. Hiçbir yerde komut satırı
 kullanmana gerek yok, hepsi tarayıcıdan.
+
+---
+
+---
+
+## ⚠️ Önemli güncelleme notu (App_Code taşındı)
+
+`.NET`'in `App_Code` klasörünü (Db.cs vb. paylaşılan kod dosyaları) tanıyabilmesi
+için bu klasörün **site kökünde** olması gerekiyor, `admin` alt klasöründe değil
+(çünkü `admin`, IIS'te ayrı bir "uygulama" olarak tanımlı değil).
+
+Bu yüzden `App_Code` klasörü artık `/site/App_Code/` altında — yani hostinginizde
+**`http/App_Code/`** yoluna inecek.
+
+**Daha önce bu paketi hostinge yüklediyseniz**, FTP ile şunu yapın:
+1. `http/admin/App_Code/` klasörü varsa **tamamen silin** (aynı sınıflar iki
+   yerde tanımlıysa hata verir).
+2. `http/App_Code/` (site kökünde, `admin` klasörünün dışında) klasörünü
+   bu paketteki `site/App_Code/` içeriğiyle oluşturun/yükleyin.
 
 ---
 
@@ -62,12 +81,12 @@ girdiğinde hangi klasörün içinde `index.html` görüyorsan o klasör adı.
 GitHub Actions sadece dosyaları yükler, veritabanı tablolarını
 oluşturmaz. Bunun için:
 
-1. İHS panelinden bir MySQL veritabanı oluştur.
-2. phpMyAdmin'e gir.
+1. İHS panelinden bir MSSQL veritabanı oluştur.
+2. SQL Server Management Studio (SSMS) veya İHS'in web tabanlı MSSQL aracıyla gir.
 3. `admin/sql/schema.sql` dosyasını İçe Aktar (Import).
 4. Ardından `admin/sql/seed.sql` dosyasını İçe Aktar.
 5. `admin/Web.config` içindeki bağlantı bilgisini (Server/Database/Uid/Pwd)
-   kendi MySQL bilgilerinle güncelle — bunu da GitHub üzerinden dosyayı
+   kendi MSSQL bilgilerinle güncelle — bunu da GitHub üzerinden dosyayı
    açıp kalem ikonuyla düzenleyebilirsin.
 
 ---

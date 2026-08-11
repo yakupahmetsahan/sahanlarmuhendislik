@@ -1,43 +1,51 @@
 # Şahanlar Mühendislik — Yönetim Paneli
 
-ASP.NET Web Forms (.NET Framework 4.8) + MySQL ile yazılmış, referansları
-(Elektrik / Enerji / Asansör / Yazılım), ekip listesini ve sayfa metinlerini
-yönetebileceğiniz basit bir admin panel.
+ASP.NET Web Forms (.NET Framework 4.8) + **MSSQL** ile yazılmış, referansları
+(Elektrik / Enerji / Asansör / Yazılım / Hayvancılık / Tarım), ekip listesini
+ve sayfa metinlerini yönetebileceğiniz basit bir admin panel.
 
-⚠️ **Önemli dürüstlük notu:** Bu kod gerçek bir IIS + MySQL sunucusuna karşı
-test edilmedi (bu ortamda Windows/IIS/MySQL çalıştıramıyorum). Söz dizimi ve
-mantık dikkatle yazıldı, ama hosting'e yüklerken küçük hatalarla
-karşılaşabilirsiniz — normal, birlikte çözeriz.
+MSSQL bağlantısı `System.Data.SqlClient` ile yapılır — bu, .NET Framework'ün
+**kendi parçasıdır**, ekstra DLL yüklemeye veya hostingde "Full Trust" izni
+istemeye gerek yoktur. (Daha önce MySQL ile denendi, paylaşımlı hostingde
+Full Trust kilidine takıldığı için MSSQL'e geçildi — Perde Otomasyon
+programınızın da kullandığı, hosting üzerinde zaten kanıtlanmış yöntem.)
+
+⚠️ **Dürüstlük notu:** Bu kod gerçek bir IIS + MSSQL sunucusuna karşı test
+edilmedi (bu ortamda Windows/IIS/MSSQL çalıştıramıyorum). Söz dizimi dikkatle
+yazıldı, ama küçük bir hatayla karşılaşırsan normal, birlikte çözeriz.
 
 ---
 
 ## 1) Klasör yapısı
 
 ```
-SahanlarAdmin/
-  Web.config              ← MySQL bağlantı bilgisi burada
-  Default.aspx            ← kök adres, giriş yapılmışsa panele yönlendirir
-  Login.aspx               ← giriş ekranı
-  Logout.aspx
-  /App_Code/
-    Db.cs                 ← MySQL yardımcı sınıfı
+site/
+  App_Code/               ← ÖNEMLİ: site KÖKÜNDE olmalı (admin altında değil)
+    Db.cs                 ← MSSQL yardımcı sınıfı
     ReferenceItem.cs
-  /Admin/                 ← korumalı alan (girişsiz erişilemez)
-    Site.Master           ← ortak panel görünümü (menü, üst bar)
-    Default.aspx           ← panel ana sayfası (özet sayılar)
-    References.aspx         ← referans listesi (kategoriye göre filtreli)
-    ReferenceEdit.aspx       ← referans ekle/düzenle + fotoğraf yükleme
-    Team.aspx / TeamEdit.aspx  ← ekip yönetimi
-    Content.aspx            ← sayfa başlıkları / metinleri düzenleme
+    AdminBasePage.cs
+  web.config               ← site kökü — burada mevcut ASP.NET ayarlarınız da var
+  (index.html, elektrik.html, ... — statik site dosyaları)
+
+admin/
+  Web.config              ← MSSQL bağlantı bilgisi burada
+  Login.aspx / Login.aspx.cs
+  Logout.aspx
+  /Admin/                 ← korumalı alan (Session ile kontrol edilir)
+    Site.Master
+    Default.aspx           ← panel ana sayfası
+    References.aspx         ← referans listesi
+    ReferenceEdit.aspx       ← referans ekle/düzenle + fotoğraf
+    Images.aspx              ← kategori kutucuk/banner görselleri
+    Team.aspx / TeamEdit.aspx
+    Content.aspx
   /Api/
-    References.ashx         ← herkese açık JSON uç noktası (bkz. madde 5)
+    References.ashx         ← herkese açık JSON uç noktası
   /Uploads/
-    /references/            ← yüklenen referans fotoğrafları buraya kaydedilir
-    /team/                   ← ekip fotoğrafları (opsiyonel)
+    /references/             ← referans fotoğrafları
   /sql/
-    schema.sql              ← veritabanı tabloları
-    seed.sql                 ← mevcut sitedeki gerçek verilerin tamamı (237 elektrik,
-                                14 asansör, 29 enerji, 4 yazılım, 13 ekip üyesi)
+    schema.sql               ← veritabanı tabloları (MSSQL/T-SQL)
+    seed.sql                  ← mevcut sitedeki gerçek verilerin tamamı
 ```
 
 ---
@@ -45,51 +53,45 @@ SahanlarAdmin/
 ## 2) Kurulum adımları
 
 ### a) Veritabanını oluşturun
-1. İHS panelinizden yeni bir **MySQL veritabanı** ve kullanıcı oluşturun.
-2. phpMyAdmin (veya panelinizin sunduğu MySQL aracı) ile veritabanına girin.
-3. **Önce** `sql/schema.sql` dosyasını "İçe Aktar" (Import) ile çalıştırın.
-4. **Sonra** `sql/seed.sql` dosyasını çalıştırın (mevcut 297 referans + ekip kaydını yükler).
+1. İHS panelinizden yeni bir **MSSQL veritabanı** ve kullanıcı oluşturun.
+2. SQL Server Management Studio (SSMS) ile bağlanın — İHS panelinizde
+   sunucu adresi/instance adı yazar (örn. `sunucuadi.ihs.com.tr` gibi).
+   SSMS yoksa İHS panelinin sunduğu web tabanlı MSSQL yönetim aracını
+   kullanabilirsiniz.
+3. **Önce** `sql/schema.sql` dosyasının tamamını çalıştırın (New Query).
+4. **Sonra** `sql/seed.sql` dosyasını çalıştırın (237 elektrik, 14 asansör,
+   29 enerji, 4 yazılım, 13 ekip üyesi + Hayvancılık/Tarım kayıtlarını yükler).
 
 ### b) Bağlantı bilgisini girin
-`Web.config` içinde şu satırı bulup kendi bilgilerinizle değiştirin:
+`admin/Web.config` içinde şu satırı bulup kendi bilgilerinizle değiştirin:
 
 ```xml
 <add name="SahanlarDb"
-     connectionString="Server=localhost;Database=sahanlar_db;Uid=sahanlar_user;Pwd=BURAYA_SIFRE;charset=utf8mb4;SslMode=none;"
-     providerName="MySql.Data.MySqlClient" />
+     connectionString="Server=localhost;Database=sahanlar_db;User Id=sahanlar_user;Password=BURAYA_SIFRE;"
+     providerName="System.Data.SqlClient" />
 ```
 
-`Server`, `Database`, `Uid`, `Pwd` değerlerini İHS panelinizdeki MySQL
-bilgileriyle değiştirin. Server genelde `localhost` olur.
+`Server`, `Database`, `User Id`, `Password` değerlerini İHS panelinizdeki
+MSSQL bilgilerinizle değiştirin.
 
-### c) MySQL Connector/NET'i projeye ekleyin
-Bu proje Visual Studio ile açılıp derlenmeli (hazır .dll dosyası bu pakette
-yok, çünkü sürüm uyumluluğu sunucunuza göre değişebilir):
+### c) Hostinge yükleyin
+Hem `site/` hem `admin/` klasörlerini FTP ile yükleyin (site → `http/`,
+admin → `http/admin/`). **`site/App_Code/` klasörünün mutlaka yüklendiğinden
+emin olun** — bu klasör olmadan admin panel çalışmaz.
 
-1. Visual Studio'da bu klasörü bir **ASP.NET Web Application (.NET Framework)**
-   projesi olarak açın (veya yeni proje oluşturup dosyaları içine kopyalayın).
-2. **Tools → NuGet Package Manager → Package Manager Console** açın.
-3. Şunu yazıp Enter'a basın: `Install-Package MySql.Data`
-4. Projeyi derleyin (Build). `/bin` klasörü otomatik oluşacak.
+`/Uploads/` ve `site/assets/img/tiles/` klasörlerinin yazma izni olduğundan
+emin olun — fotoğraf yükleme burada başarısız olursa hosting desteğine
+"bu klasörlere yazma izni verir misiniz" diye yazmanız yeterli.
 
-### d) Hostinge yükleyin
-Tüm proje klasörünü (bin klasörü dahil) FTP ile hostinginizdeki
-`httpdocs` veya `wwwroot` klasörüne yükleyin. `/Uploads/` klasörünün
-yazma izni (write permission) olduğundan emin olun — fotoğraf yükleme
-burada başarısız olursa hosting desteğine "Uploads klasörüne IIS_IUSRS
-yazma izni verir misiniz" diye yazmanız yeterli.
-
-### e) Giriş yapın
-`https://siteniz.com/Login.aspx` adresine gidin.
+### d) Giriş yapın
+`https://siteniz.com/admin/Login.aspx` adresine gidin.
 
 - **Kullanıcı adı:** `admin`
 - **Şifre:** `Sahanlar2026!`
 
-**Giriş yaptıktan hemen sonra bu şifreyi değiştirin.** Hostinginizin MySQL
-sürümü eski olabileceği için (SHA2 fonksiyonu bulunmayabilir), şifre
-değiştirmek için paket içindeki `sifre-hash-araci.html` dosyasını
-bilgisayarınızda çift tıklayıp açın, yeni şifrenizi yazın, çıkan kodu
-kopyalayıp phpMyAdmin'de şunu çalıştırın:
+**Giriş yaptıktan hemen sonra bu şifreyi değiştirin.** Paket içindeki
+`sifre-hash-araci.html` dosyasını bilgisayarınızda çift tıklayıp açın,
+yeni şifrenizi yazın, çıkan kodu kopyalayıp MSSQL'de şunu çalıştırın:
 
 ```sql
 UPDATE admin_users
@@ -101,43 +103,23 @@ WHERE username = 'admin';
 
 ## 3) Neyi yönetebilirsiniz
 
-- **Referanslar** (4 kategori): ekle, düzenle, sil, fotoğraf yükle,
-  "Öne Çıkan Projeler" bölümünde gösterilsin mi işaretle.
-- **Ekip**: ad, unvan, grup (Mühendislik / Ofis / Teknik) ekle-düzenle-sil.
+- **Referanslar** (6 kategori): ekle, düzenle, sil, fotoğraf yükle.
+- **Kategori Görselleri**: her kategorinin ana sayfa kutucuğu ve banner
+  fotoğrafını değiştir.
+- **Ekip**: ad, unvan, grup ekle-düzenle-sil.
 - **Sayfa Metinleri**: her sayfanın başlık ve açıklama yazılarını değiştir.
 
 ---
 
-## 4) Önceden yüklenmiş veriler (seed.sql)
+## 4) Bu panel siteyle nasıl konuşacak?
 
-Excel'inizden ve kataloglardan derlediğimiz **gerçek** veriler zaten
-yüklü geliyor:
-- 237 elektrik referansı (216 trafo + 21 elektrik altyapı)
-- 14 asansör işi (30 asansör)
-- 29 GES projesi (13 fotoğraflı + 16 Excel kaydı)
-- 4 yazılım ürünü
-- 13 ekip üyesi
-
-Referans fotoğrafları `/Uploads/references/` klasöründe hazır halde
-paketin içinde geliyor (ges-*.jpg, enh-*.jpg dosyaları).
-
----
-
-## 5) Bu panel siteyle nasıl konuşacak? (önemli, okuyun)
-
-Şu an elinizdeki **görsel site** (index.html, elektrik.html vb.) hâlâ
-**statik dosyalar** — yani bu admin panelden bir referans eklediğinizde,
-veritabanı güncellenir ama sitedeki HTML dosyaları OTOMATİK değişmez.
+Şu an elinizdeki **statik site** hâlâ statik dosyalar — admin panelden
+değişiklik yaptığınızda veritabanı güncellenir ama HTML dosyaları otomatik
+değişmez (Kategori Görselleri sayfası istisna — o direkt dosya üzerine
+yazıyor).
 
 `/Api/References.ashx?category=elektrik` adresi veritabanındaki güncel
-veriyi JSON olarak dışarı veriyor — bunu hazırladım ki köprü hazır olsun.
-
-**Bir sonraki adım olarak** iki seçeneğimiz var:
-1. **Statik sayfalara küçük bir JavaScript ekleyip**, sayfa açıldığında
-   bu API'den veri çekip tabloyu/kartları otomatik oluşturmasını
-   sağlamak (siteyi statik tutar, hızlı kalır).
-2. **Sayfaları da ASP.NET'e çevirip** sunucu tarafında veritabanından
-   okuyarak oluşturmak (daha "klasik" ama daha çok iş).
-
-İkisinden birini seçersen bir sonraki adımda onu da tamamlarım — şu an
-panel tek başına çalışır durumda, sadece siteye otomatik yansımıyor.
+referans verisini JSON olarak dışarı veriyor — sonraki adımda statik
+sayfalara bunu okuyan bir JavaScript ekleyebiliriz, ya da sayfaları
+ASP.NET'e çevirip sunucu tarafında okutabiliriz. Şu an panel tek başına
+çalışır durumda, ne zaman istersen bu köprüyü tamamlarız.
