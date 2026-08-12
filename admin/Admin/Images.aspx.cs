@@ -31,7 +31,7 @@ public partial class Admin_Images : AdminBasePage
 
     private string TilesFolder()
     {
-        // Site kökündeki assets/img/tiles/ klasörü — admin klasörünün bir üstünde.
+        // Site kökündeki assets/img/tiles/ klasörü.
         string path = System.Configuration.ConfigurationManager.AppSettings["SiteTilesPath"] ?? "~/assets/img/tiles/";
         return Server.MapPath(path);
     }
