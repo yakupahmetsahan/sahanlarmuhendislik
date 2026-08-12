@@ -37,7 +37,7 @@ public partial class Login : System.Web.UI.Page
             return;
         }
 
-        Db.Execute("UPDATE admin_users SET last_login_at = NOW() WHERE id = @id",
+        Db.Execute("UPDATE admin_users SET last_login_at = GETDATE() WHERE id = @id",
             new SqlParameter("@id", table.Rows[0]["id"]));
 
         // Session tabanlı giriş — Web.config'te Forms Authentication tanımlamaya
