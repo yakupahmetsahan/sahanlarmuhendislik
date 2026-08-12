@@ -49,7 +49,7 @@ public partial class Login : System.Web.UI.Page
         if (!string.IsNullOrEmpty(returnUrl) && returnUrl.StartsWith("/"))
             Response.Redirect(returnUrl, false);
         else
-            Response.Redirect("~/Admin/Default.aspx", false);
+            Response.Redirect("~/admin/Admin/Default.aspx", false);
     }
 
     private void ShowError(string message)

@@ -17,7 +17,7 @@ public class AdminBasePage : System.Web.UI.Page
     {
         if (string.IsNullOrEmpty(CurrentUsername))
         {
-            Response.Redirect("~/Login.aspx?returnUrl=" + Server.UrlEncode(Request.Url.PathAndQuery), false);
+            Response.Redirect("~/admin/Login.aspx?returnUrl=" + Server.UrlEncode(Request.Url.PathAndQuery), false);
             Response.End();
             return;
         }

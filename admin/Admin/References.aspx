@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Admin/Site.Master" AutoEventWireup="true" CodeFile="References.aspx.cs" Inherits="Admin_References" %>
+<%@ Page Language="C#" MasterPageFile="~/admin/Admin/Site.Master" AutoEventWireup="true" CodeFile="References.aspx.cs" Inherits="Admin_References" %>
 <asp:Content ID="c1" ContentPlaceHolderID="TitleContent" runat="server">Referanslar</asp:Content>
 <asp:Content ID="c2" ContentPlaceHolderID="MainContent" runat="server">
     <h1 class="page-title"><asp:Literal ID="litCategoryTitle" runat="server" /> Referansları</h1>
@@ -20,7 +20,7 @@
                     <ItemTemplate>
                         <asp:Image ID="imgThumb" runat="server" CssClass="thumb"
                             Visible='<%# !string.IsNullOrEmpty(Eval("photo_filename") as string) %>'
-                            ImageUrl='<%# "~/Uploads/references/" + Eval("photo_filename") %>' />
+                            ImageUrl='<%# "~/admin/Uploads/references/" + Eval("photo_filename") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:BoundField HeaderText="Ad" DataField="name" />

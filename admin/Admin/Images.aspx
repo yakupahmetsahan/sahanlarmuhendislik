@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Admin/Site.Master" AutoEventWireup="true" CodeFile="Images.aspx.cs" Inherits="Admin_Images" %>
+<%@ Page Language="C#" MasterPageFile="~/admin/Admin/Site.Master" AutoEventWireup="true" CodeFile="Images.aspx.cs" Inherits="Admin_Images" %>
 <asp:Content ID="c1" ContentPlaceHolderID="TitleContent" runat="server">Görsel Yönetimi</asp:Content>
 <asp:Content ID="c2" ContentPlaceHolderID="MainContent" runat="server">
     <h1 class="page-title">Kategori Görselleri</h1>

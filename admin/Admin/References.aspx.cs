@@ -53,7 +53,7 @@ public partial class Admin_References : AdminBasePage
                 string filename = table.Rows[0]["photo_filename"].ToString();
                 if (!string.IsNullOrEmpty(filename))
                 {
-                    string path = Server.MapPath("~/Uploads/references/" + filename);
+                    string path = Server.MapPath("~/admin/Uploads/references/" + filename);
                     if (File.Exists(path)) File.Delete(path);
                 }
             }

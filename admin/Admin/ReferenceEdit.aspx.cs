@@ -53,7 +53,7 @@ public partial class Admin_ReferenceEdit : AdminBasePage
         string photo = row["photo_filename"] as string;
         if (!string.IsNullOrEmpty(photo))
         {
-            imgCurrent.ImageUrl = "~/Uploads/references/" + photo;
+            imgCurrent.ImageUrl = "~/admin/Uploads/references/" + photo;
             imgCurrent.Visible = true;
             litCurrentPhoto.Text = " Mevcut: " + photo;
         }
@@ -134,7 +134,7 @@ public partial class Admin_ReferenceEdit : AdminBasePage
             throw new Exception("Sadece JPG veya PNG dosyaları yüklenebilir.");
 
         string safeName = ddlCategory.SelectedValue + "-" + Guid.NewGuid().ToString("N").Substring(0, 8) + ext;
-        string folder = Server.MapPath("~/Uploads/references/");
+        string folder = Server.MapPath("~/admin/Uploads/references/");
         if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
         upload.SaveAs(Path.Combine(folder, safeName));
         return safeName;

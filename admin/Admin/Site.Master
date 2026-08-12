@@ -48,19 +48,19 @@
             <b>Şahanlar Mühendislik — Yönetim Paneli</b>
             <div>
                 <span style="color:#8592a8;font-size:.85rem;">Hoş geldin, <%= Session["AdminDisplayName"] ?? Session["AdminUser"] %></span>
-                <a href="~/Logout.aspx" runat="server">Çıkış Yap</a>
+                <a href="~/admin/Logout.aspx" runat="server">Çıkış Yap</a>
             </div>
         </div>
         <div class="layout">
             <div class="sidebar">
-                <a href="~/Admin/Default.aspx" runat="server">Panel</a>
-                <a href="~/Admin/References.aspx?cat=elektrik" runat="server">Elektrik Referansları</a>
-                <a href="~/Admin/References.aspx?cat=enerji" runat="server">Enerji Referansları</a>
-                <a href="~/Admin/References.aspx?cat=asansor" runat="server">Asansör Referansları</a>
-                <a href="~/Admin/References.aspx?cat=yazilim" runat="server">Yazılım Referansları</a>
-                <a href="~/Admin/Images.aspx" runat="server">Kategori Görselleri</a>
-                <a href="~/Admin/Team.aspx" runat="server">Ekip</a>
-                <a href="~/Admin/Content.aspx" runat="server">Sayfa Metinleri</a>
+                <a href="~/admin/Admin/Default.aspx" runat="server">Panel</a>
+                <a href="~/admin/Admin/References.aspx?cat=elektrik" runat="server">Elektrik Referansları</a>
+                <a href="~/admin/Admin/References.aspx?cat=enerji" runat="server">Enerji Referansları</a>
+                <a href="~/admin/Admin/References.aspx?cat=asansor" runat="server">Asansör Referansları</a>
+                <a href="~/admin/Admin/References.aspx?cat=yazilim" runat="server">Yazılım Referansları</a>
+                <a href="~/admin/Admin/Images.aspx" runat="server">Kategori Görselleri</a>
+                <a href="~/admin/Admin/Team.aspx" runat="server">Ekip</a>
+                <a href="~/admin/Admin/Content.aspx" runat="server">Sayfa Metinleri</a>
             </div>
             <div class="content">
                 <asp:ContentPlaceHolder ID="MainContent" runat="server" />

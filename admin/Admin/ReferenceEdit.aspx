@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Admin/Site.Master" AutoEventWireup="true" CodeFile="ReferenceEdit.aspx.cs" Inherits="Admin_ReferenceEdit" %>
+<%@ Page Language="C#" MasterPageFile="~/admin/Admin/Site.Master" AutoEventWireup="true" CodeFile="ReferenceEdit.aspx.cs" Inherits="Admin_ReferenceEdit" %>
 <asp:Content ID="c1" ContentPlaceHolderID="TitleContent" runat="server">Referans Düzenle</asp:Content>
 <asp:Content ID="c2" ContentPlaceHolderID="MainContent" runat="server">
     <h1 class="page-title"><asp:Literal ID="litHeader" runat="server" /></h1>

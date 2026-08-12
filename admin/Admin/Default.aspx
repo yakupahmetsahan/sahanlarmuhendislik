@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Admin/Site.Master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Admin_Default" %>
+<%@ Page Language="C#" MasterPageFile="~/admin/Admin/Site.Master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Admin_Default" %>
 <asp:Content ID="c1" ContentPlaceHolderID="TitleContent" runat="server">Panel</asp:Content>
 <asp:Content ID="c2" ContentPlaceHolderID="MainContent" runat="server">
     <h1 class="page-title">Genel Bakış</h1>

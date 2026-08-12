@@ -6,6 +6,6 @@ public partial class Logout : System.Web.UI.Page
     {
         Session.Clear();
         Session.Abandon();
-        Response.Redirect("~/Login.aspx", false);
+        Response.Redirect("~/admin/Login.aspx", false);
     }
 }
