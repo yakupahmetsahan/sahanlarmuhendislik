@@ -13,7 +13,7 @@ REM   4) Aşağıdaki LOCAL_SITE ve LOCAL_ADMIN yollarını, GitHub
 REM      Desktop'ın deposunu kopyaladığın klasöre göre düzenle
 REM ============================================================
 
-set SITE_NAME=sahanlar-ftp
+set SITE_NAME=sahanlarmuhendislik.com
 set LOCAL_SITE=C:\Users\Sahanlar\Documents\GitHub\sahanlarmuhendislik\site
 set LOCAL_ADMIN=C:\Users\Sahanlar\Documents\GitHub\sahanlarmuhendislik\admin
 set WINSCP_EXE="C:\Program Files (x86)\WinSCP\WinSCP.com"
