@@ -140,7 +140,7 @@ public partial class Admin_ReferenceEdit : AdminBasePage
         return safeName;
     }
 
-    private static object NullIfEmpty(string s) => string.IsNullOrWhiteSpace(s) ? (object)DBNull.Value : s.Trim();
+    private static object NullIfEmpty(string s) { return string.IsNullOrWhiteSpace(s) ? (object)DBNull.Value : s.Trim(); }
     private static object NullIfEmptyInt(string s) { int v; return int.TryParse(s, out v) ? (object)v : DBNull.Value; }
     private static object NullIfEmptyDecimal(string s) { decimal v; return decimal.TryParse(s, out v) ? (object)v : DBNull.Value; }
 
