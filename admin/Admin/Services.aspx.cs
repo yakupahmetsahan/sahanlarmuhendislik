@@ -18,7 +18,7 @@ public partial class Admin_Services : AdminBasePage
         get
         {
             string cat = Request.QueryString["cat"];
-            return CategoryLabels.ContainsKey(cat) ? cat : "elektrik";
+            return !string.IsNullOrEmpty(cat) && CategoryLabels.ContainsKey(cat) ? cat : "elektrik";
         }
     }
 
