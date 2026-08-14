@@ -336,6 +336,16 @@ h1,h2,h3,h4{
 .cat-hero .tag{ color:color-mix(in srgb, var(--accent) 70%, black); }
 .cat-hero h1{ font-size:clamp(1.8rem,4vw,2.7rem); color:var(--ink); }
 .cat-hero p.lead{ color:var(--muted-dark); font-size:1.02rem; }
+.cat-hero-full{ display:block; padding:0; border-bottom:none; min-height:460px; position:relative; overflow:hidden; background:var(--ink); }
+.cat-hero-full .cat-hero-bg{ position:absolute; inset:0; background-size:cover; background-position:center; }
+.cat-hero-full .cat-hero-overlay{ position:absolute; inset:0; background:linear-gradient(to top, rgba(6,10,20,.92) 8%, rgba(6,10,20,.5) 55%, rgba(6,10,20,.08) 100%); }
+.cat-hero-full .wrap{ position:relative; z-index:1; display:block; min-height:460px; padding:64px 24px 48px; display:flex; flex-direction:column; justify-content:flex-end; }
+.cat-hero-full .breadcrumb{ color:rgba(255,255,255,.62); }
+.cat-hero-full .breadcrumb a{ color:rgba(255,255,255,.88); }
+.cat-hero-full .tag{ color:#fff; }
+.cat-hero-full h1{ color:#fff; font-size:clamp(1.8rem,4vw,2.7rem); }
+.cat-hero-full p.lead{ color:rgba(255,255,255,.86); font-size:1.02rem; max-width:640px; }
+@media (max-width:820px){ .cat-hero-full{ min-height:380px; } .cat-hero-full .wrap{ min-height:380px; padding:40px 20px 32px; } }
 .breadcrumb{ font-family:'JetBrains Mono',monospace; font-size:.76rem; color:var(--muted-dark); margin-bottom:18px; }
 .breadcrumb a:hover{ color:var(--ink); }
 
@@ -560,18 +570,14 @@ h1,h2,h3,h4{
   </div>
 </header>
 
-<section class="cat-hero" style="--accent:var(--hayvancilik)">
+<section class="cat-hero cat-hero-full" style="--accent:var(--hayvancilik)">
+  <span class="cat-hero-bg" style="background-image:url('assets/img/tiles/hero-hayvancilik.jpg');"></span>
+  <span class="cat-hero-overlay"></span>
   <div class="wrap">
-    <div>
-      <div class="breadcrumb"><a href="index.html">Anasayfa</a> / Hayvancılık</div>
-      <span class="tag">Hayvancılık</span>
-      <h1>Kendi tesisimizde güvenilir üretim.</h1>
-      <p class="lead">2024'ten bu yana Çivril, Karalar'da işlettiğimiz etlik piliç tesisimizle mühendislik hizmetlerimizin yanında hayvancılık sektöründe de üretim yapıyoruz.</p>
-    </div>
-    <div class="cat-hero-visual">
-      <span class="photo" style="background-image:url('assets/img/tiles/hero-hayvancilik.jpg');"></span>
-      <span class="caption">Etlik Piliç Tesisi — Karalar, Çivril</span>
-    </div>
+    <div class="breadcrumb"><a href="index.html">Anasayfa</a> / Hayvancılık</div>
+    <span class="tag">Hayvancılık</span>
+    <h1>Kendi tesisimizde güvenilir üretim.</h1>
+    <p class="lead">2024'ten bu yana Çivril, Karalar'da işlettiğimiz etlik piliç tesisimizle mühendislik hizmetlerimizin yanında hayvancılık sektöründe de üretim yapıyoruz.</p>
   </div>
 </section>
 

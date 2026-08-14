@@ -16,6 +16,8 @@ public class Api_Services : IHttpHandler
     {
         context.Response.ContentType = "application/json; charset=utf-8";
         context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+        context.Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
+        context.Response.Cache.SetNoStore();
 
         string category = context.Request.QueryString["category"];
         var allowed = new[] { "elektrik", "enerji", "asansor", "yazilim" };
