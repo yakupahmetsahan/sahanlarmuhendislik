@@ -34,6 +34,7 @@
             <asp:ListItem Text="— seçiniz —" Value="" />
             <asp:ListItem Text="kVa" Value="kVa" />
             <asp:ListItem Text="kW" Value="kW" />
+            <asp:ListItem Text="kWe" Value="kWe" />
             <asp:ListItem Text="MW" Value="MW" />
         </asp:DropDownList>
 

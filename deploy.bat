@@ -6,10 +6,10 @@ REM  ve admin panel dosyalarını FTP ile hostinge yükler.
 REM
 REM  ÖNCE KURULUM (bir kere yapılır, bkz. DEPLOY_KURULUM.md):
 REM   1) WinSCP'yi kur: https://winscp.net/eng/download.php
-REM   2) WinSCP'yi aç, "New Site" ile İHS FTP bilgilerini gir,
-REM      "Save" derken bir isim ver: ornek "sahanlar-ftp"
-REM   3) Aşağıdaki SITE_NAME değerini o isimle değiştir
-REM   4) Aşağıdaki LOCAL_SITE ve LOCAL_ADMIN yollarını, GitHub
+REM   2) WinSCP FileZilla'daki siteni otomatik bulur, adı
+REM      "sahanlarmuhendislik.com" olarak görünür (SITE_NAME zaten
+REM      bu isimle eşleşiyor, değiştirmene gerek yok)
+REM   3) Aşağıdaki LOCAL_SITE ve LOCAL_ADMIN yollarını, GitHub
 REM      Desktop'ın deposunu kopyaladığın klasöre göre düzenle
 REM ============================================================
 
@@ -24,8 +24,8 @@ echo.
 
 %WINSCP_EXE% /command ^
   "open %SITE_NAME%" ^
-  "synchronize remote -filemask=""|Download/;Guncellemeler/;ProgramSetuplar/;Sozlesmeler/"" ""%LOCAL_SITE%"" /http" ^
-  "synchronize remote ""%LOCAL_ADMIN%"" /http/admin" ^
+  "synchronize remote -filemask=""|Download/;Guncellemeler/;ProgramSetuplar/;Sozlesmeler/;assets/img/tiles/"" ""%LOCAL_SITE%"" /http" ^
+  "synchronize remote -filemask=""|Uploads/"" ""%LOCAL_ADMIN%"" /http/admin" ^
   "exit"
 
 echo.

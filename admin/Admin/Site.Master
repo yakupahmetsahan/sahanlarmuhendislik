@@ -59,6 +59,7 @@
                 <a href="~/admin/Admin/References.aspx?cat=asansor" runat="server">Asansör Referansları</a>
                 <a href="~/admin/Admin/References.aspx?cat=yazilim" runat="server">Yazılım Referansları</a>
                 <a href="~/admin/Admin/Images.aspx" runat="server">Kategori Görselleri</a>
+                <a href="~/admin/Admin/Services.aspx" runat="server">Hizmet Kartları</a>
                 <a href="~/admin/Admin/Team.aspx" runat="server">Ekip</a>
                 <a href="~/admin/Admin/Content.aspx" runat="server">Sayfa Metinleri</a>
             </div>

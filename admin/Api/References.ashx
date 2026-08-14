@@ -80,7 +80,7 @@ public class Api_References : IHttpHandler
     {
         if (filename == DBNull.Value || filename == null || string.IsNullOrEmpty(filename.ToString()))
             return "null";
-        return "\"/Uploads/references/" + filename + "\"";
+        return "\"/admin/Uploads/references/" + filename + "\"";
     }
 
     public bool IsReusable { get { return false; } }

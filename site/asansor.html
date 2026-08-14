@@ -583,23 +583,7 @@ h1,h2,h3,h4{
       <h2>Asansör hizmet alanlarımız</h2>
       <p>Küçük ölçekli bakımdan büyük tesisat projelerine kadar.</p>
     </div>
-  </div>
-  <div class="services" style="--accent:var(--asansor)">
-    <div class="service">
-      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="1"/><path d="M10 8l2-2 2 2M10 14l2 2 2-2"/></svg></span>
-      <h4>Asansör Montajı</h4>
-      <p>Yeni bina ve mevcut yapılarda anahtar teslim asansör montajı.</p>
-    </div>
-    <div class="service">
-      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg></span>
-      <h4>Periyodik Bakım</h4>
-      <p>Yönetmeliklere uygun aylık periyodik bakım ve kontrol hizmeti.</p>
-    </div>
-    <div class="service">
-      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg></span>
-      <h4>Revizyon</h4>
-      <p>Eski asansörlerin güncel güvenlik standartlarına uygun hale getirilmesi.</p>
-    </div>
+    <div class="services" id="asan-services" style="--accent:var(--asansor)"></div>
   </div>
 </section>
 
@@ -766,6 +750,48 @@ h1,h2,h3,h4{
   }, {threshold:0.3});
   var stripEl = document.querySelector('.strip');
   if(stripEl) observer.observe(stripEl);
+})();
+</script>
+<script>
+var SVC_ICONS = {
+  bolt: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  pulse: '<path d="M3 12h4l3 8 4-16 3 8h4"/>',
+  battery: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 6h2v6h-2z" fill="currentColor" stroke="none"/>',
+  check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  building: '<path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1M9 13h1M9 17h1M14 9h1M14 13h1M14 17h1"/>',
+  chart: '<polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/>',
+  code: '<rect x="3" y="4" width="18" height="13" rx="1"/><path d="M8 21h8M12 17v4"/><polyline points="8 8 6 10.5 8 13"/><polyline points="16 8 18 10.5 16 13"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.4-3.4a4 4 0 0 1-4.8 4.8L6.8 20.2a2 2 0 1 1-2.8-2.8L14.5 7.1a4 4 0 0 1 4.8-4.8Z"/>',
+  shield: '<path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z"/>',
+  home: '<path d="M4 21V9l8-6 8 6v12"/><path d="M9 21v-6h6v6"/>',
+  bulb: '<path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.6.6 1 1.5 1 2.5h6c0-1 .4-1.9 1-2.5A6 6 0 0 0 12 2z"/>',
+  elevator: '<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h4"/>',
+  monitor: '<rect x="3" y="3" width="18" height="14" rx="1"/><path d="M8 21h8M12 17v4"/>'
+};
+
+(function () {
+  function esc(s) {
+    return (s == null ? "" : String(s)).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  fetch("admin/Api/Services.ashx?category=asansor")
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function (items) {
+      if (!items || !items.length) return;
+      var container = document.getElementById("asan-services");
+      if (!container) return;
+      container.innerHTML = items.map(function (s) {
+        var path = SVC_ICONS[s.icon_key] || SVC_ICONS.check;
+        return '<div class="service">' +
+          '<span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg></span>' +
+          '<h4>' + esc(s.title) + '</h4>' +
+          '<p>' + esc(s.description || "") + '</p>' +
+          '</div>';
+      }).join("");
+    })
+    .catch(function () { /* API'ye ulaşılamazsa bölüm boş kalır */ });
 })();
 </script>
 </body>

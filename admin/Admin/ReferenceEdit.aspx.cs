@@ -36,17 +36,18 @@ public partial class Admin_ReferenceEdit : AdminBasePage
         var table = Db.Query("SELECT * FROM site_references WHERE id = @id", new SqlParameter("@id", id));
         if (table.Rows.Count == 0) return;
         var row = table.Rows[0];
+        var inv = System.Globalization.CultureInfo.InvariantCulture;
 
         ddlCategory.SelectedValue = row["category"].ToString();
         txtName.Text = row["name"].ToString();
         txtType.Text = row["ref_type"] as string;
         txtLocation.Text = row["location"] as string;
-        txtYear.Text = row["ref_year"] == DBNull.Value ? "" : row["ref_year"].ToString();
-        txtPowerValue.Text = row["power_value"] == DBNull.Value ? "" : row["power_value"].ToString();
+        txtYear.Text = row["ref_year"] == DBNull.Value ? "" : Convert.ToInt32(row["ref_year"]).ToString(inv);
+        txtPowerValue.Text = row["power_value"] == DBNull.Value ? "" : Convert.ToDecimal(row["power_value"]).ToString(inv);
         ddlPowerUnit.SelectedValue = row["power_unit"] as string ?? "";
-        txtEnh.Text = row["enh_meters"] == DBNull.Value ? "" : row["enh_meters"].ToString();
-        txtDirek.Text = row["direk_count"] == DBNull.Value ? "" : row["direk_count"].ToString();
-        txtUnitCount.Text = row["unit_count"] == DBNull.Value ? "" : row["unit_count"].ToString();
+        txtEnh.Text = row["enh_meters"] == DBNull.Value ? "" : Convert.ToInt32(row["enh_meters"]).ToString(inv);
+        txtDirek.Text = row["direk_count"] == DBNull.Value ? "" : Convert.ToInt32(row["direk_count"]).ToString(inv);
+        txtUnitCount.Text = row["unit_count"] == DBNull.Value ? "" : Convert.ToInt32(row["unit_count"]).ToString(inv);
         chkFeatured.Checked = row["is_featured"] != DBNull.Value && Convert.ToBoolean(row["is_featured"]);
         txtSortOrder.Text = row["sort_order"].ToString();
 

@@ -106,3 +106,23 @@ ON target.page_key = source.page_key AND target.content_key = source.content_key
 WHEN MATCHED THEN UPDATE SET content_value = source.content_value
 WHEN NOT MATCHED THEN INSERT (page_key, content_key, content_value) VALUES (source.page_key, source.content_key, source.content_value);
 GO
+
+-- ------------------------------------------------------------
+-- 5) Hizmet kartları (her kategori sayfasındaki "Hizmetlerimiz" bölümü)
+-- ------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'service_items')
+CREATE TABLE service_items (
+    id              INT IDENTITY(1,1) PRIMARY KEY,
+    category        NVARCHAR(20) NOT NULL,      -- 'elektrik','enerji','asansor','yazilim'
+    icon_key        NVARCHAR(30) NOT NULL DEFAULT 'check',
+    title           NVARCHAR(200) NOT NULL,
+    description     NVARCHAR(400) NULL,
+    sort_order      INT NOT NULL DEFAULT 0,
+    created_at      DATETIME NOT NULL DEFAULT GETDATE(),
+    updated_at      DATETIME NOT NULL DEFAULT GETDATE()
+);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_service_category' AND object_id = OBJECT_ID('service_items'))
+CREATE INDEX idx_service_category ON service_items(category);
+GO
