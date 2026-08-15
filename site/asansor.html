@@ -566,8 +566,8 @@ h1,h2,h3,h4{
     <div>
       <div class="breadcrumb"><a href="index.html">Anasayfa</a> / Asansör</div>
       <span class="tag">Asansör Mühendisliği</span>
-      <h1>Asansörde güvenlik ve konforu bir arada sağlıyoruz.</h1>
-      <p class="lead">Yeni asansör montajından periyodik bakım ve revizyona kadar, yönetmeliklere uygun asansör hizmetleri sunuyoruz.</p>
+      <h1 id="hero-title">Asansörde güvenlik ve konforu bir arada sağlıyoruz.</h1>
+      <p class="lead" id="hero-lead">Yeni asansör montajından periyodik bakım ve revizyona kadar, yönetmeliklere uygun asansör hizmetleri sunuyoruz.</p>
     </div>
     <div class="cat-hero-visual no-photo">
       <span class="photo"></span>
@@ -793,6 +793,20 @@ var SVC_ICONS = {
       }).join("");
     })
     .catch(function () { /* API'ye ulaşılamazsa bölüm boş kalır */ });
+})();
+</script>
+
+<script>
+(function () {
+  fetch("admin/Api/Content.ashx?page=asansor")
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function (c) {
+      var t = document.getElementById("hero-title");
+      var l = document.getElementById("hero-lead");
+      if (t && c.hero_title) t.textContent = c.hero_title;
+      if (l && c.hero_lead) l.textContent = c.hero_lead;
+    })
+    .catch(function () { /* API'ye ulaşılamazsa sayfadaki mevcut statik metin kalır */ });
 })();
 </script>
 </body>

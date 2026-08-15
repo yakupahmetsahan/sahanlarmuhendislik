@@ -577,8 +577,8 @@ h1,h2,h3,h4{
   <div class="wrap">
     <div class="breadcrumb"><a href="index.html">Anasayfa</a> / Enerji</div>
     <span class="tag">Enerji Mühendisliği</span>
-    <h1>Enerjini verimli kullanmanın mühendislik yolu.</h1>
-    <p class="lead">Enerji verimliliğinden kompanzasyona, yenilenebilir enerji sistemlerinden enerji kimlik belgesine kadar işletmenizin enerji maliyetini düşürecek çözümleri planlıyoruz.</p>
+    <h1 id="hero-title">Enerjini verimli kullanmanın mühendislik yolu.</h1>
+    <p class="lead" id="hero-lead">Enerji verimliliğinden kompanzasyona, yenilenebilir enerji sistemlerinden enerji kimlik belgesine kadar işletmenizin enerji maliyetini düşürecek çözümleri planlıyoruz.</p>
   </div>
 </section>
 
@@ -808,6 +808,20 @@ var SVC_ICONS = {
       }).join("");
     })
     .catch(function () { /* API'ye ulaşılamazsa bölüm boş kalır */ });
+})();
+</script>
+
+<script>
+(function () {
+  fetch("admin/Api/Content.ashx?page=enerji")
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function (c) {
+      var t = document.getElementById("hero-title");
+      var l = document.getElementById("hero-lead");
+      if (t && c.hero_title) t.textContent = c.hero_title;
+      if (l && c.hero_lead) l.textContent = c.hero_lead;
+    })
+    .catch(function () { /* API'ye ulaşılamazsa sayfadaki mevcut statik metin kalır */ });
 })();
 </script>
 </body>

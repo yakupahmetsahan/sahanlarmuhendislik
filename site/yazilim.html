@@ -577,8 +577,8 @@ h1,h2,h3,h4{
   <div class="wrap">
     <div class="breadcrumb"><a href="index.html">Anasayfa</a> / Yazılım</div>
     <span class="tag">Yazılım Geliştirme</span>
-    <h1>İşletmenizin operasyonunu yöneten yazılımlar.</h1>
-    <p class="lead">Perde otomasyonundan muhasebe ve POS takibine kadar, işletmelerin günlük operasyonunu kolaylaştıran masaüstü yazılımlar geliştiriyoruz.</p>
+    <h1 id="hero-title">İşletmenizin operasyonunu yöneten yazılımlar.</h1>
+    <p class="lead" id="hero-lead">Perde otomasyonundan muhasebe ve POS takibine kadar, işletmelerin günlük operasyonunu kolaylaştıran masaüstü yazılımlar geliştiriyoruz.</p>
   </div>
 </section>
 
@@ -656,6 +656,20 @@ h1,h2,h3,h4{
       }
     })
     .catch(function () { /* API'ye ulaşılamazsa sayfadaki mevcut statik içerik kalır */ });
+})();
+</script>
+
+<script>
+(function () {
+  fetch("admin/Api/Content.ashx?page=yazilim")
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function (c) {
+      var t = document.getElementById("hero-title");
+      var l = document.getElementById("hero-lead");
+      if (t && c.hero_title) t.textContent = c.hero_title;
+      if (l && c.hero_lead) l.textContent = c.hero_lead;
+    })
+    .catch(function () { /* API'ye ulaşılamazsa sayfadaki mevcut statik metin kalır */ });
 })();
 </script>
 </body>

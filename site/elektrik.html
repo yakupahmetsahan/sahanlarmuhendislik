@@ -577,8 +577,8 @@ h1,h2,h3,h4{
   <div class="wrap">
     <div class="breadcrumb"><a href="index.html">Anasayfa</a> / Elektrik</div>
     <span class="tag">Elektrik Mühendisliği</span>
-    <h1>Tesisattan panoya, mühendislik güvencesiyle elektrik.</h1>
-    <p class="lead">Konut, işyeri ve sanayi tesislerinde elektrik tesisatı, pano ve aydınlatma sistemlerini proje aşamasından bakıma kadar uçtan uca yürütüyoruz.</p>
+    <h1 id="hero-title">Tesisattan panoya, mühendislik güvencesiyle elektrik.</h1>
+    <p class="lead" id="hero-lead">Konut, işyeri ve sanayi tesislerinde elektrik tesisatı, pano ve aydınlatma sistemlerini proje aşamasından bakıma kadar uçtan uca yürütüyoruz.</p>
   </div>
 </section>
 
@@ -803,6 +803,20 @@ var SVC_ICONS = {
       }).join("");
     })
     .catch(function () { /* API'ye ulaşılamazsa bölüm boş kalır */ });
+})();
+</script>
+
+<script>
+(function () {
+  fetch("admin/Api/Content.ashx?page=elektrik")
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function (c) {
+      var t = document.getElementById("hero-title");
+      var l = document.getElementById("hero-lead");
+      if (t && c.hero_title) t.textContent = c.hero_title;
+      if (l && c.hero_lead) l.textContent = c.hero_lead;
+    })
+    .catch(function () { /* API'ye ulaşılamazsa sayfadaki mevcut statik metin kalır */ });
 })();
 </script>
 </body>
