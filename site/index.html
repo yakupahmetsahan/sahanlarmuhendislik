@@ -74,10 +74,10 @@ h1,h2,h3,h4{
 .brand-banner{ background:#fff; border-bottom:1px solid #dde3ee; }
 .brand-banner-top{
   display:flex; align-items:center; justify-content:space-between;
-  gap:24px; padding:16px 24px; max-width:1180px; margin:0 auto;
+  gap:24px; padding:10px 24px; max-width:1180px; margin:0 auto;
 }
 .brand-banner .brand{ display:flex; align-items:center; gap:10px; flex:none; }
-.brand-banner .brand-mark{ height:58px; width:auto; }
+.brand-banner .brand-mark{ height:44px; width:auto; }
 .brand-banner .brand-text{ display:flex; flex-direction:column; line-height:1.15; font-family:'Barlow',sans-serif; color:var(--ink); font-size:1.22rem; font-weight:600; }
 .brand-banner .brand-text b{ font-weight:700; letter-spacing:.01em; }
 .brand-banner .brand-text small{
@@ -95,11 +95,14 @@ h1,h2,h3,h4{
 .top-nav a:hover{ color:var(--brand); }
 .top-nav a.active{ color:var(--brand); }
 
-.cat-tiles-section{ background:var(--paper); padding:28px 0 8px; }
+.cat-tiles-section{ background:var(--paper); padding:14px 0 8px; }
 .cat-tiles-section .section-head{ margin-bottom:18px; }
 .cat-tiles{
   display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
   max-width:1180px; margin:0 auto; padding:0 24px 16px;
+}
+@media (min-width:821px){
+  .cat-tile{ aspect-ratio:auto; height:30vh; min-height:160px; max-height:280px; }
 }
 .cat-tile{
   position:relative; aspect-ratio:1/1; border-radius:8px; overflow:hidden;
@@ -505,7 +508,7 @@ h1,h2,h3,h4{
 .cta-actions{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
 
 /* ---------- footer ---------- */
-.site-footer{ background:var(--brand); color:rgba(255,255,255,.75); padding:28px 0; }
+.site-footer{ background:var(--brand); color:rgba(255,255,255,.75); padding:16px 0; }
 .site-footer .grid{
   display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:32px; margin-bottom:36px;
 }
