@@ -126,3 +126,10 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_service_category' AND object_id = OBJECT_ID('service_items'))
 CREATE INDEX idx_service_category ON service_items(category);
 GO
+
+-- ------------------------------------------------------------
+-- 6) Yazılım referansları için indirme linki alanı
+-- ------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('site_references') AND name = 'download_url')
+ALTER TABLE site_references ADD download_url NVARCHAR(500) NULL;
+GO

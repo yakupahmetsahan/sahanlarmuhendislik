@@ -50,6 +50,7 @@ public partial class Admin_ReferenceEdit : AdminBasePage
         txtUnitCount.Text = row["unit_count"] == DBNull.Value ? "" : Convert.ToInt32(row["unit_count"]).ToString(inv);
         chkFeatured.Checked = row["is_featured"] != DBNull.Value && Convert.ToBoolean(row["is_featured"]);
         txtSortOrder.Text = row["sort_order"].ToString();
+        txtDownloadUrl.Text = row["download_url"] as string;
 
         string photo = row["photo_filename"] as string;
         if (!string.IsNullOrEmpty(photo))
@@ -94,6 +95,7 @@ public partial class Admin_ReferenceEdit : AdminBasePage
                 new SqlParameter("@direk_count", NullIfEmptyInt(txtDirek.Text)),
                 new SqlParameter("@unit_count", NullIfEmptyInt(txtUnitCount.Text)),
                 new SqlParameter("@photo_filename", (object)photoFilename ?? DBNull.Value),
+                new SqlParameter("@download_url", NullIfEmpty(txtDownloadUrl.Text)),
                 new SqlParameter("@is_featured", chkFeatured.Checked ? 1 : 0),
                 new SqlParameter("@sort_order", string.IsNullOrWhiteSpace(txtSortOrder.Text) ? 0 : int.Parse(txtSortOrder.Text))
             };
@@ -104,7 +106,8 @@ public partial class Admin_ReferenceEdit : AdminBasePage
                                 category=@category, name=@name, ref_type=@ref_type, location=@location,
                                 ref_year=@ref_year, power_value=@power_value, power_unit=@power_unit,
                                 enh_meters=@enh_meters, direk_count=@direk_count, unit_count=@unit_count,
-                                photo_filename=@photo_filename, is_featured=@is_featured, sort_order=@sort_order
+                                photo_filename=@photo_filename, is_featured=@is_featured, sort_order=@sort_order,
+                                download_url=@download_url
                              WHERE id=@id",
                     Concat(pars, new SqlParameter("@id", EditId.Value)));
             }
@@ -112,10 +115,10 @@ public partial class Admin_ReferenceEdit : AdminBasePage
             {
                 Db.Execute(@"INSERT INTO site_references
                                 (category,name,ref_type,location,ref_year,power_value,power_unit,
-                                 enh_meters,direk_count,unit_count,photo_filename,is_featured,sort_order)
+                                 enh_meters,direk_count,unit_count,photo_filename,is_featured,sort_order,download_url)
                              VALUES
                                 (@category,@name,@ref_type,@location,@ref_year,@power_value,@power_unit,
-                                 @enh_meters,@direk_count,@unit_count,@photo_filename,@is_featured,@sort_order)",
+                                 @enh_meters,@direk_count,@unit_count,@photo_filename,@is_featured,@sort_order,@download_url)",
                     pars);
             }
 

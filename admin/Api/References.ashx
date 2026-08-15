@@ -31,7 +31,7 @@ public class Api_References : IHttpHandler
         }
 
         DataTable table = Db.Query(
-            "SELECT id,name,ref_type,location,ref_year,power_value,power_unit,enh_meters,direk_count,unit_count,photo_filename,is_featured " +
+            "SELECT id,name,ref_type,location,ref_year,power_value,power_unit,enh_meters,direk_count,unit_count,photo_filename,is_featured,download_url " +
             "FROM site_references WHERE category=@c ORDER BY sort_order, ref_year DESC, name",
             new SqlParameter("@c", category));
 
@@ -58,6 +58,7 @@ public class Api_References : IHttpHandler
             sb.Append("\"direk_count\":" + JsonNum(row["direk_count"]) + ",");
             sb.Append("\"unit_count\":" + JsonNum(row["unit_count"]) + ",");
             sb.Append("\"photo_url\":" + JsonPhotoUrl(row["photo_filename"]) + ",");
+            sb.Append("\"download_url\":" + JsonStr(row["download_url"]) + ",");
             sb.Append("\"is_featured\":" + (Convert.ToBoolean(row["is_featured"]) ? "true" : "false"));
             sb.Append("}");
         }

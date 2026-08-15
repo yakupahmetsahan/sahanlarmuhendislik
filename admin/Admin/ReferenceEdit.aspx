@@ -47,6 +47,9 @@
         <label>Adet (sadece Asansör — kaç asansör)</label>
         <asp:TextBox ID="txtUnitCount" runat="server" TextMode="Number" />
 
+        <label>İndirme Linki (opsiyonel — özellikle Yazılım için)</label>
+        <asp:TextBox ID="txtDownloadUrl" runat="server" placeholder="https://..." />
+
         <label>Fotoğraf (opsiyonel — jpg/png, en fazla 5MB)</label>
         <asp:FileUpload ID="fuPhoto" runat="server" />
         <div style="margin-top:8px;">

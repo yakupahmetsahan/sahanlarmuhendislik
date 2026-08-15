@@ -36,6 +36,57 @@ public partial class Admin_Images : AdminBasePage
         return Server.MapPath(path);
     }
 
+    private string LogoFolder()
+    {
+        // Site kökündeki assets/img/ klasörü (tiles'ın bir üstü).
+        string path = System.Configuration.ConfigurationManager.AppSettings["SiteImgPath"] ?? "~/assets/img/";
+        return Server.MapPath(path);
+    }
+
+    protected void btnSaveLogo_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!fuLogo.HasFile)
+            {
+                litMsg.Text = "<div class='msg-ok' style='background:#fdecec;color:#b3261e;'>Dosya seçmediniz.</div>";
+                return;
+            }
+            ValidateImage(fuLogo.FileName);
+            string folder = LogoFolder();
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            fuLogo.SaveAs(Path.Combine(folder, "logo.png"));
+            litMsg.Text = "<div class='msg-ok'>Logo güncellendi.</div>";
+        }
+        catch (Exception ex)
+        {
+            litMsg.Text = "<div class='msg-ok' style='background:#fdecec;color:#b3261e;'>Hata: " +
+                           Server.HtmlEncode(ex.Message) + "</div>";
+        }
+    }
+
+    protected void btnSaveKurumsal_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!fuKurumsal.HasFile)
+            {
+                litMsg.Text = "<div class='msg-ok' style='background:#fdecec;color:#b3261e;'>Dosya seçmediniz.</div>";
+                return;
+            }
+            ValidateImage(fuKurumsal.FileName);
+            string folder = TilesFolder();
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            fuKurumsal.SaveAs(Path.Combine(folder, "hero-kurumsal.jpg"));
+            litMsg.Text = "<div class='msg-ok'>Kurumsal fotoğrafı güncellendi.</div>";
+        }
+        catch (Exception ex)
+        {
+            litMsg.Text = "<div class='msg-ok' style='background:#fdecec;color:#b3261e;'>Hata: " +
+                           Server.HtmlEncode(ex.Message) + "</div>";
+        }
+    }
+
     protected void btnSaveCategory_Click(object sender, EventArgs e)
     {
         var btn = (LinkButton)sender;
