@@ -35,25 +35,28 @@ jobs:
       - name: Kodu indir
         uses: actions/checkout@v4
 
-      - name: FTP ile siteyi yükle
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          local-dir: ./site/
-          server-dir: ./http/
-          dangerous-clean-slate: false
-          exclude: |
-            **/download/**
-            **/Guncellemeler/**
-            **/ProgramSetuplar/**
-            **/Sozlesmeler/**
-            **/assets/img/tiles/**
-            **/assets/img/logo.png
-          # ^ Mevcut hostingde zaten duran, dokunulmaması gereken klasörler
-          #   VE admin panelden yönetilen görseller (üzerine yazılmasın diye).
+      - name: lftp kur
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: FTP ile siteyi yükle (lftp, ayrıntılı log açık)
+        run: |
+          lftp -d -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -e "
+          set ftp:ssl-force true;
+          set ftp:ssl-protect-data true;
+          set ssl:verify-certificate no;
+          set net:timeout 20;
+          set net:max-retries 2;
+          set mirror:parallel-transfer-count 3;
+          mirror -R --verbose \
+            --exclude-glob 'Download/' \
+            --exclude-glob 'Guncellemeler/' \
+            --exclude-glob 'ProgramSetuplar/' \
+            --exclude-glob 'Sozlesmeler/' \
+            --exclude-glob 'assets/img/tiles/' \
+            --exclude-glob 'logo.png' \
+            ./site/ ./http/;
+          bye
+          " "${{ secrets.FTP_SERVER }}"
 
   deploy-admin:
     name: Admin paneli yükle (alt klasör)
@@ -63,16 +66,20 @@ jobs:
       - name: Kodu indir
         uses: actions/checkout@v4
 
-      - name: FTP ile admin paneli yükle
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          local-dir: ./admin/
-          server-dir: ./http/admin/
-          dangerous-clean-slate: false
-          exclude: |
-            **/Uploads/**
-          # ^ Admin panelden yüklenen referans/ekip fotoğrafları korunuyor.
+      - name: lftp kur
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: FTP ile admin paneli yükle (lftp, ayrıntılı log açık)
+        run: |
+          lftp -d -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -e "
+          set ftp:ssl-force true;
+          set ftp:ssl-protect-data true;
+          set ssl:verify-certificate no;
+          set net:timeout 20;
+          set net:max-retries 2;
+          set mirror:parallel-transfer-count 3;
+          mirror -R --verbose \
+            --exclude-glob 'Uploads/' \
+            ./admin/ ./http/admin/;
+          bye
+          " "${{ secrets.FTP_SERVER }}"
