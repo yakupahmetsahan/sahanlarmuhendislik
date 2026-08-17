@@ -13,12 +13,23 @@ name: İHS Hosting'e Otomatik Yükle
 # klasör yapınıza göre değiştirmeniz gerekebilir.
 
 on:
-  workflow_dispatch:   # artık otomatik değil — sadece GitHub arayüzünden elle tetiklenir
-                        # (Deploy artık deploy.bat ile bilgisayarından yapılıyor, bkz. DEPLOY_KURULUM.md)
+  workflow_dispatch:   # şimdilik elle tetikleniyor — bağlantı doğrulanınca "push" tetikleyicisini geri ekleriz
 
 jobs:
+  network-test:
+    name: Bağlantı testi (teşhis amaçlı)
+    runs-on: ubuntu-latest
+    steps:
+      - name: FTP sunucusuna ham bağlantı testi (port 21)
+        run: |
+          echo "Sunucuya bağlanmayı deniyorum..."
+          timeout 15 bash -c "cat < /dev/null > /dev/tcp/${{ secrets.FTP_SERVER }}/21" \
+            && echo "✅ BAŞARILI: port 21'e bağlanabildim, sorun FTP protokolünde/kimlik doğrulamada olabilir." \
+            || echo "❌ BAŞARISIZ: port 21'e hiç bağlanamadım — hosting GitHub'ın IP'sini engelliyor olabilir."
+
   deploy-site:
     name: Statik siteyi yükle (ana domain)
+    needs: network-test
     runs-on: ubuntu-latest
     steps:
       - name: Kodu indir
@@ -39,16 +50,14 @@ jobs:
             **/Guncellemeler/**
             **/ProgramSetuplar/**
             **/Sozlesmeler/**
-          # ^ Mevcut hostingde zaten duran, dokunulmaması gereken klasörler.
-          # ^ İHS'te ana klasör genelde "httpdocs" veya "wwwroot" olur.
-          #   Hosting panelinizdeki dosya yöneticisinde adını görüp
-          #   burayı ona göre düzeltin (örn: ./public_html/).
-          #   dangerous-clean-slate:false ve exclude listesi, sunucuda
-          #   zaten var olan Download/Güncellemeler klasörlerinin
-          #   silinmemesini garanti eder.
+            **/assets/img/tiles/**
+            **/assets/img/logo.png
+          # ^ Mevcut hostingde zaten duran, dokunulmaması gereken klasörler
+          #   VE admin panelden yönetilen görseller (üzerine yazılmasın diye).
 
   deploy-admin:
     name: Admin paneli yükle (alt klasör)
+    needs: network-test
     runs-on: ubuntu-latest
     steps:
       - name: Kodu indir
@@ -64,6 +73,6 @@ jobs:
           local-dir: ./admin/
           server-dir: ./http/admin/
           dangerous-clean-slate: false
-          # ^ Admin panel siteniz/admin adresinde açılacak şekilde
-          #   "httpdocs" altına "admin" klasörü olarak yüklenir.
-          #   Bu satırı da kendi klasör yapınıza göre düzeltin.
+          exclude: |
+            **/Uploads/**
+          # ^ Admin panelden yüklenen referans/ekip fotoğrafları korunuyor.
