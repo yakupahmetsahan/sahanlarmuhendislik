@@ -20,6 +20,13 @@ jobs:
     name: Bağlantı testi (teşhis amaçlı)
     runs-on: ubuntu-latest
     steps:
+      - name: Bu çalıştırmanın kaynak (public) IP adresini göster
+        run: |
+          echo "Bu GitHub Actions çalıştırmasının kullandığı public IP:"
+          curl -s https://api.ipify.org
+          echo ""
+          echo "Tarih/saat (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')"
+
       - name: FTP sunucusuna ham bağlantı testi (port 21)
         run: |
           echo "Sunucuya bağlanmayı deniyorum..."
@@ -37,6 +44,11 @@ jobs:
 
       - name: lftp kur
         run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Bu çalıştırmanın kaynak (public) IP'si ve saati (İHS'e bildirmek için)
+        run: |
+          echo "Kaynak IP: $(curl -s https://api.ipify.org)"
+          echo "Tarih/saat (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')"
 
       - name: FTP ile siteyi yükle (lftp, ayrıntılı log açık)
         run: |
@@ -69,6 +81,11 @@ jobs:
 
       - name: lftp kur
         run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Bu çalıştırmanın kaynak (public) IP'si ve saati (İHS'e bildirmek için)
+        run: |
+          echo "Kaynak IP: $(curl -s https://api.ipify.org)"
+          echo "Tarih/saat (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')"
 
       - name: FTP ile admin paneli yükle (lftp, ayrıntılı log açık)
         run: |
