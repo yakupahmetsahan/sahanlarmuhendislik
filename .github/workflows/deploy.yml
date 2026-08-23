@@ -53,6 +53,7 @@ jobs:
       - name: FTP ile siteyi yükle (lftp, ayrıntılı log açık)
         run: |
           lftp -d -e "
+          set ftp:ssl-allow true;
           set net:timeout 20;
           set net:max-retries 2;
           set mirror:parallel-transfer-count 3;
@@ -87,6 +88,7 @@ jobs:
       - name: FTP ile admin paneli yükle (lftp, ayrıntılı log açık)
         run: |
           lftp -d -e "
+          set ftp:ssl-allow true;
           set net:timeout 20;
           set net:max-retries 2;
           set mirror:parallel-transfer-count 3;
