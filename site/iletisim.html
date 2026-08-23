@@ -336,6 +336,16 @@ h1,h2,h3,h4{
 .cat-hero .wrap{ position:relative; display:grid; grid-template-columns:1.05fr .95fr; gap:40px; align-items:center; }
 .cat-hero .tag{ color:color-mix(in srgb, var(--accent) 70%, black); }
 .cat-hero h1{ font-size:clamp(1.8rem,4vw,2.7rem); color:var(--ink); }
+.cat-hero-full{ display:block; padding:0; border-bottom:none; min-height:460px; position:relative; overflow:hidden; background:var(--ink); }
+.cat-hero-full .cat-hero-bg{ position:absolute; inset:0; }
+.cat-hero-full .cat-hero-overlay{ position:absolute; inset:0; background:linear-gradient(to top, rgba(6,10,20,.92) 8%, rgba(6,10,20,.5) 55%, rgba(6,10,20,.08) 100%); pointer-events:none; }
+.cat-hero-full .wrap{ position:relative; z-index:1; display:block; min-height:460px; padding:64px 24px 48px; display:flex; flex-direction:column; justify-content:flex-end; }
+.cat-hero-full .breadcrumb{ color:rgba(255,255,255,.62); }
+.cat-hero-full .breadcrumb a{ color:rgba(255,255,255,.88); }
+.cat-hero-full .tag{ color:#fff; }
+.cat-hero-full h1{ color:#fff; font-size:clamp(1.8rem,4vw,2.7rem); }
+.cat-hero-full p.lead{ color:rgba(255,255,255,.86); font-size:1.02rem; max-width:640px; }
+@media (max-width:820px){ .cat-hero-full{ min-height:380px; } .cat-hero-full .wrap{ min-height:380px; padding:40px 20px 32px; } }
 .cat-hero p.lead{ color:var(--muted-dark); font-size:1.02rem; }
 .breadcrumb{ font-family:'JetBrains Mono',monospace; font-size:.76rem; color:var(--muted-dark); margin-bottom:18px; }
 .breadcrumb a:hover{ color:var(--ink); }
@@ -561,19 +571,19 @@ h1,h2,h3,h4{
   </div>
 </header>
 
-<section class="cat-hero" style="--accent:var(--brand)">
+<section class="cat-hero cat-hero-full" style="--accent:var(--brand)">
+  <div class="cat-hero-bg">
+    <iframe
+      src="https://maps.google.com/maps?q=A%C5%9Fa%C4%9F%C4%B1%20Mah.%20Dumlup%C4%B1nar%20Cad.%20No%3A12%2FA%2C%20%C3%87ivril%2FDenizli&t=&z=15&ie=UTF8&iwloc=&output=embed"
+      width="100%" height="100%" style="border:0;display:block;" loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade" title="Şahanlar Mühendislik konum"></iframe>
+  </div>
+  <span class="cat-hero-overlay"></span>
   <div class="wrap">
-    <div>
-      <div class="breadcrumb"><a href="index.html">Anasayfa</a> / İletişim</div>
-      <span class="tag">İletişim</span>
-      <h1>Projeni konuşmak için buradayız.</h1>
-      <p class="lead">Elektrik, enerji, asansör veya yazılım — hangi konuda olursa olsun, en hızlı dönüş için telefon veya e-posta ile ulaşabilirsin.</p>
-    </div>
-    <div class="cat-hero-visual no-photo">
-      <span class="photo"></span>
-      <span class="wm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
-      <span class="caption">Çivril / Denizli</span>
-    </div>
+    <div class="breadcrumb"><a href="index.html">Anasayfa</a> / İletişim</div>
+    <span class="tag">İletişim</span>
+    <h1>Projeni konuşmak için buradayız.</h1>
+    <p class="lead">Elektrik, enerji, asansör veya yazılım — hangi konuda olursa olsun, en hızlı dönüş için telefon veya e-posta ile ulaşabilirsin.</p>
   </div>
 </section>
 
@@ -583,7 +593,7 @@ h1,h2,h3,h4{
       <span class="tag" style="color:var(--brand)">Bize Ulaşın</span>
       <h2>İletişim Bilgilerimiz</h2>
     </div>
-    <div class="services">
+    <div class="services" style="grid-template-columns:repeat(4,1fr);">
     <div class="service">
       <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
       <h4>Telefon</h4>
@@ -604,13 +614,6 @@ h1,h2,h3,h4{
       <h4>Sosyal Medya</h4>
       <p><a href="https://instagram.com/sahanlarmuhendislikelektrk" target="_blank" rel="noopener">Instagram</a> · <a href="https://facebook.com/sahanlarmuhendislikelektrk" target="_blank" rel="noopener">Facebook</a></p>
     </div>
-    </div>
-
-    <div style="margin-top:32px; border-radius:14px; overflow:hidden; border:1px solid #e3e8f0; box-shadow:0 12px 30px rgba(16,25,43,.08);">
-      <iframe
-        src="https://maps.google.com/maps?q=A%C5%9Fa%C4%9F%C4%B1%20Mah.%20Dumlup%C4%B1nar%20Cad.%20No%3A12%2FA%2C%20%C3%87ivril%2FDenizli&t=&z=15&ie=UTF8&iwloc=&output=embed"
-        width="100%" height="360" style="border:0; display:block;" loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade" title="Şahanlar Mühendislik konum"></iframe>
     </div>
   </div>
 </section>
